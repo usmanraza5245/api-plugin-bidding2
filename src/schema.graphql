@@ -1,0 +1,41 @@
+type Bid implements Node {
+  _id: ID!
+  productId: ID!
+  updatedAt: DateTime
+  createddAt: DateTime
+  status: String
+  offers: [Offer]
+  acceptedOffer: Offer
+  shopId: ID!
+  createdBy: ID
+  sender: createdByUserinfo
+}
+type Offer implements Node {
+  _id: ID!
+  amount: Int!
+  text:String
+  updatedAt: DateTime
+  createdAt: DateTime
+  sender: createdByUserinfo
+  createdBy: ID
+}
+extend type Query {
+  getBidsbyAccountId: [Bid]
+}
+extend type Mutation {
+  placeBidOnProduct(input: placeBidInput): placeBidPayLoad
+  sendOffer(input:offerInput):Offer
+}
+type placeBidPayLoad {
+  bidId: ID
+}
+input placeBidInput {
+  shopId: ID!
+  productId: ID!
+  offer: offerInput!
+}
+input offerInput {
+  amount: Int!
+  text:String
+  status: String
+}
