@@ -8,23 +8,28 @@ type Bid implements Node {
   acceptedOffer: Offer
   shopId: ID!
   createdBy: ID
-  sender: createdByUserinfo
+  createdByinfo: createdByUserinfo
+  soldBy: ID!
+  soldByInfo: createdByUserinfo
 }
 type Offer implements Node {
   _id: ID!
   amount: Int!
-  text:String
+  text: String
   updatedAt: DateTime
   createdAt: DateTime
   sender: createdByUserinfo
   createdBy: ID
+  reciever: createdByUserinfo
+  createdFor: ID
 }
 extend type Query {
   getBidsbyAccountId: [Bid]
+  getBidsbySellerId: [Bid]
 }
 extend type Mutation {
   placeBidOnProduct(input: placeBidInput): placeBidPayLoad
-  sendOffer(input:offerInput):Offer
+  sendOffer(input: sendOfferInput): Offer
 }
 type placeBidPayLoad {
   bidId: ID
@@ -32,10 +37,18 @@ type placeBidPayLoad {
 input placeBidInput {
   shopId: ID!
   productId: ID!
+  variantId: ID!
+  soldby: ID!
   offer: offerInput!
 }
 input offerInput {
   amount: Int!
-  text:String
+  text: String
   status: String
+}
+
+input sendOfferInput {
+  bidId: ID!
+  offer: offerInput!
+  to: ID!
 }

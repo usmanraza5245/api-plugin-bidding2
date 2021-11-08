@@ -15,12 +15,16 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 export default async function placeBidOnProduct(context, args) {
   const { collections } = context;
   const { Bids } = collections;
-  const { shopId, productId, offer } = args;
+  const { shopId, productId, offer ,variantId,soldby} = args;
   let accountId = context.userId;
   let decodeProductId = decodeOpaqueId(productId).id;
+  let decodeVariantId = decodeOpaqueId(variantId).id;
   let decodeShopId = decodeOpaqueId(shopId).id;
   if (decodeProductId == productId || productId.length == 0) {
     throw new Error("ProductId must be a Reaction ID");
+  }
+  if (decodeVariantId == variantId || variantId.length == 0) {
+    throw new Error("variantId must be a Reaction ID");
   }
   if (decodeShopId == shopId || shopId.length == 0) {
     throw new Error("shopId must be a Reaction ID");
@@ -32,12 +36,14 @@ export default async function placeBidOnProduct(context, args) {
   let insert_obj = {
     _id: new_id,
     productId: decodeProductId,
+    variantId:decodeVariantId,
     shopId: decodeShopId,
     createdBy: accountId,
     createdAt: new Date(),
     updatedAt: new Date(),
     status: "new",
-    offers: [{ ...offer, createdBy: accountId }],
+    soldBy:soldby,
+    offers: [{ ...offer, createdBy: accountId,_id: await generateUID(),createdFor:soldby }],
   };
   let BidsAdded = await Bids.insertOne(insert_obj);
   if (BidsAdded.insertedId) {

@@ -1,4 +1,5 @@
 import placeBidOnProduct  from "../utils/placeBidOnProduct.js";
+import createOffer  from "../utils/createOffer.js";
 export default {
   async placeBidOnProduct(parent, args, context, info) {
 
@@ -13,6 +14,7 @@ export default {
     return {bidId};
   },
   async sendOffer(parent,args,context,info){
-      console.log("create Offer")
+      let offer=await createOffer(context,args.input)
+      
   }
 };
