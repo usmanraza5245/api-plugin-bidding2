@@ -2,7 +2,7 @@ type Bid implements Node {
   _id: ID!
   productId: ID!
   updatedAt: DateTime
-  createddAt: DateTime
+  createdAt: DateTime
   status: String
   offers: [Offer]
   acceptedOffer: Offer

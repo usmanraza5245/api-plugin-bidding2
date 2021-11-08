@@ -15,28 +15,41 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 export default async function createOffer(context, args) {
   const { collections } = context;
   const { Bids } = collections;
-  const {  bidId, offer,to } = args;
+  const { bidId, offer, to } = args;
   let accountId = context.userId;
-  if (!bidId|| bidId.length == 0) {
+  if (!bidId || bidId.length == 0) {
     throw new Error("bidId is required");
   }
- console.log("accountId",accountId);
- console.log("bidId",bidId);
- console.log(offer)
- let bidExist=await Bids.findOne({"_id":bidId});
- console.log("bidExist",bidExist);
-if(!bidExist){
-  throw new Error("invalid bid ID");
-}
-let bid_update = await Bids.updateOne(
-  { _id: bidId },
-  {
-    $addToSet: {
-      offers: { ...offer, createdBy: accountId,_id: await generateUID(),createdFor:to },
-    },
+  console.log("accountId", accountId);
+  console.log("bidId", bidId);
+  console.log(offer);
+  let bidExist = await Bids.findOne({ _id: bidId });
+  if (!bidExist) {
+    throw new Error("invalid bid ID");
   }
-);
-// let new_id = await generateUID();
+  let offerObj = {
+    ...offer,
+    createdBy: accountId,
+    createdAt: new Date(),
+    _id: await generateUID(),
+    createdFor: to,
+  };
+  let bid_update = await Bids.updateOne(
+    { _id: bidId },
+    {
+      $addToSet: {
+        offers: offerObj,
+      }
+
+    }
+  );
+  console.log(bid_update);
+  if (bid_update.modifiedCount) {
+    return offerObj;
+  } else {
+    throw new Error("Something qent wrong");
+  }
+  // let new_id = await generateUID();
   //  let insert_obj = {
   //   _id: new_id,
   //   productId: decodeProductId,

@@ -9,7 +9,7 @@ export default {
   },
   async getBidsbySellerId(parent, args, context, info) {
     console.log("getBidsbyAccountId query called");
-    let bids = await getBidsbyAccountId(context, args);
+    let bids = await getBidsbySellerId(context, args);
     console.log("bids", bids);
     return bids;
   },

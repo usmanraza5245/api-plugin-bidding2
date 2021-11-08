@@ -43,7 +43,9 @@ export default async function placeBidOnProduct(context, args) {
     updatedAt: new Date(),
     status: "new",
     soldBy:soldby,
-    offers: [{ ...offer, createdBy: accountId,_id: await generateUID(),createdFor:soldby }],
+    offers: [{ ...offer, createdBy: accountId,_id: await generateUID(),createdFor:soldby,
+      createdAt: new Date(),
+    }],
   };
   let BidsAdded = await Bids.insertOne(insert_obj);
   if (BidsAdded.insertedId) {
