@@ -14,7 +14,7 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
  */
 export default async function createOffer(context, args) {
   const { collections, pubSub } = context;
-  const { Bids } = collections;
+  const { Bids,Accounts } = collections;
   const { bidId, offer, to, type } = args;
   let accountId = context.userId;
   if (!bidId || bidId.length == 0) {
@@ -39,13 +39,50 @@ export default async function createOffer(context, args) {
       {
         $addToSet: {
           offers: offerObj,
+          
         },
         $set:{
           activeOffer: offerObj,
+          status:"inProgress",
           canAccept:to
         }
       }
     );  
+  }
+  else if(type=="acceptedOffer"){
+    const date = new Date();
+    date.setDate(date.getDate() + 1);
+    let valid_till = date;
+
+    bid_update =await Bids.updateOne(
+      { _id: bidId },
+      {
+        $addToSet: {
+          offers: offerObj,
+        },
+        $set:{
+          acceptedOffer: {...offerObj,validTill:valid_till},
+          acceptedBy:accountId,
+          canAccept:null,
+          status:"closed"
+        }
+      }
+    );  
+  }
+  else if(type=="rejectOffer"){
+ 
+    bid_update =await Bids.updateOne(
+      { _id: bidId },
+      {
+        $addToSet: {
+          offers: offerObj,
+        },
+        $set:{
+          status:"closed"
+
+        }
+      }
+    );
   }
   else{
     bid_update =await Bids.updateOne(
@@ -53,6 +90,10 @@ export default async function createOffer(context, args) {
       {
         $addToSet: {
           offers: offerObj,
+        },
+        $set:{
+          status:"inProgress"
+
         }
       }
     );

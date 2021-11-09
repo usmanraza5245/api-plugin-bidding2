@@ -1,12 +1,12 @@
 type Bid implements Node {
   _id: ID!
   productId: ID!
-  product:CatalogProduct
+  product: CatalogProduct
   updatedAt: DateTime
   createdAt: DateTime
   status: String
-  offerBy:ID,
-  canAccept:ID,
+  offerBy: ID
+  canAccept: ID
   offers: [Offer]
   acceptedOffer: Offer
   shopId: ID!
@@ -17,26 +17,36 @@ type Bid implements Node {
 }
 type Offer implements Node {
   _id: ID!
-  amount: Int!
+  amount: Money!
   text: String
   updatedAt: DateTime
   createdAt: DateTime
   sender: createdByUserinfo
   createdBy: ID
-  status:String
+  status: String
   reciever: createdByUserinfo
   createdFor: ID
 }
 extend type Query {
   getBidsbyAccountId: [Bid]
   getBidsbySellerId: [Bid]
+  getActiveBidOnProduct(input: activeBidInput): activeBidPayLoad
 }
 extend type Subscription {
-  offer(bidId:ID!) : Offer!
+  offer(bidId: ID!): Offer!
 }
 extend type Mutation {
   placeBidOnProduct(input: placeBidInput): placeBidPayLoad
   sendOffer(input: sendOfferInput): Offer
+}
+input activeBidInput {
+  productId: ID!
+  variantId: ID!
+}
+type activeBidPayLoad  {
+  
+  offer:Offer
+  isValid:Boolean
 }
 type placeBidPayLoad {
   bidId: ID
@@ -47,11 +57,10 @@ input placeBidInput {
   variantId: ID!
   soldby: ID!
   offer: offerInput!
-  offerType:offerTypes!
-
+  offerType: offerTypes!
 }
 input offerInput {
-  amount: Int!
+  amount: MoneyInput!
   text: String
   status: String
 }
@@ -60,7 +69,7 @@ input sendOfferInput {
   bidId: ID!
   offer: offerInput!
   to: ID!
-  type:offerTypes!
+  type: offerTypes!
 }
 enum offerTypes {
   text
