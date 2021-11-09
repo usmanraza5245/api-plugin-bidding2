@@ -12,10 +12,10 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
  * @param {Boolean} args.shouldIncludeArchived - Include archived units in results
  * @returns {Promise<Object[]>} Array of Unit Variant objects.
  */
-export default async function getBidsbySellerId(context, args) {
+export default async function getOffersbyBidId(context, args) {
   const { collections } = context;
   const { Bids } = collections;
-  const { bidId} = args;
+  const { shopId, productId, offer ,variantId,soldby} = args;
   let accountId = context.userId;
   console.log("accountId",accountId);
  let bids= await Bids.find({"soldBy":accountId}).toArray();

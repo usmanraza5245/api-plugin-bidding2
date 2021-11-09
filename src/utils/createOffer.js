@@ -13,7 +13,7 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
  * @returns {Promise<Object[]>} Array of Unit Variant objects.
  */
 export default async function createOffer(context, args) {
-  const { collections } = context;
+  const { collections,pubSub } = context;
   const { Bids } = collections;
   const { bidId, offer, to } = args;
   let accountId = context.userId;
@@ -45,9 +45,11 @@ export default async function createOffer(context, args) {
   );
   console.log(bid_update);
   if (bid_update.modifiedCount) {
+    pubSub.publish(`newOffer ${bidId}`, {offer: offerObj })
+
     return offerObj;
   } else {
-    throw new Error("Something qent wrong");
+    throw new Error("Something went wrong");
   }
   // let new_id = await generateUID();
   //  let insert_obj = {

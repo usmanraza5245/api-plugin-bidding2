@@ -3,6 +3,7 @@ import importAsString from "@reactioncommerce/api-utils/importAsString.js";
 import _ from "lodash";
 import Query from "./resolvers/Query.js";
 import Mutation from "./resolvers/Mutations.js";
+import Subscription from "./resolvers/Subscription.js";
 const mySchema = importAsString("./schema.graphql");
 
 var _context = null;
@@ -10,6 +11,7 @@ var _context = null;
 const resolvers = {
   Query,
   Mutation,
+  Subscription
 };
 
 function biddingStartUp(context) {

@@ -20,12 +20,16 @@ type Offer implements Node {
   createdAt: DateTime
   sender: createdByUserinfo
   createdBy: ID
+  status:String
   reciever: createdByUserinfo
   createdFor: ID
 }
 extend type Query {
   getBidsbyAccountId: [Bid]
   getBidsbySellerId: [Bid]
+}
+extend type Subscription {
+  offer(bidId:ID!) : Offer!
 }
 extend type Mutation {
   placeBidOnProduct(input: placeBidInput): placeBidPayLoad
