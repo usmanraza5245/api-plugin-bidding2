@@ -17,7 +17,6 @@ export default async function getOffersbyBidId(context, args) {
   const { Bids } = collections;
   const { shopId, productId, offer ,variantId,soldby} = args;
   let accountId = context.userId;
-  console.log("accountId",accountId);
  let bids= await Bids.find({"soldBy":accountId}).toArray();
  return bids;
 }

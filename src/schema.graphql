@@ -1,15 +1,18 @@
 type Bid implements Node {
   _id: ID!
   productId: ID!
+  product:CatalogProduct
   updatedAt: DateTime
   createdAt: DateTime
   status: String
+  offerBy:ID,
+  canAccept:ID,
   offers: [Offer]
   acceptedOffer: Offer
   shopId: ID!
   createdBy: ID
   createdByinfo: createdByUserinfo
-  soldBy: ID!
+  soldBy: ID
   soldByInfo: createdByUserinfo
 }
 type Offer implements Node {
@@ -44,6 +47,8 @@ input placeBidInput {
   variantId: ID!
   soldby: ID!
   offer: offerInput!
+  offerType:offerTypes!
+
 }
 input offerInput {
   amount: Int!
@@ -55,4 +60,12 @@ input sendOfferInput {
   bidId: ID!
   offer: offerInput!
   to: ID!
+  type:offerTypes!
+}
+enum offerTypes {
+  text
+  counterOffer
+  acceptedOffer
+  rejectOffer
+  game
 }

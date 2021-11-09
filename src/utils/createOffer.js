@@ -13,39 +13,54 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
  * @returns {Promise<Object[]>} Array of Unit Variant objects.
  */
 export default async function createOffer(context, args) {
-  const { collections,pubSub } = context;
+  const { collections, pubSub } = context;
   const { Bids } = collections;
-  const { bidId, offer, to } = args;
+  const { bidId, offer, to, type } = args;
   let accountId = context.userId;
   if (!bidId || bidId.length == 0) {
     throw new Error("bidId is required");
   }
-  console.log("accountId", accountId);
-  console.log("bidId", bidId);
-  console.log(offer);
   let bidExist = await Bids.findOne({ _id: bidId });
   if (!bidExist) {
     throw new Error("invalid bid ID");
   }
   let offerObj = {
     ...offer,
+    type: type,
     createdBy: accountId,
     createdAt: new Date(),
     _id: await generateUID(),
     createdFor: to,
   };
-  let bid_update = await Bids.updateOne(
-    { _id: bidId },
-    {
-      $addToSet: {
-        offers: offerObj,
+  let bid_update = null;
+  if(type=="counterOffer"){
+    bid_update =await Bids.updateOne(
+      { _id: bidId },
+      {
+        $addToSet: {
+          offers: offerObj,
+        },
+        $set:{
+          activeOffer: offerObj,
+  
+        }
       }
-
-    }
-  );
-  console.log(bid_update);
+    );  
+  }
+  else{
+    bid_update =await Bids.updateOne(
+      { _id: bidId },
+      {
+        $addToSet: {
+          offers: offerObj,
+        }
+      }
+    );
+  
+  }
+  
   if (bid_update.modifiedCount) {
-    pubSub.publish(`newOffer ${bidId}`, {offer: offerObj })
+    pubSub.publish(`newOffer ${bidId}`, { offer: offerObj });
 
     return offerObj;
   } else {

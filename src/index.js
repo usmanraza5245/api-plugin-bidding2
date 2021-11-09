@@ -4,6 +4,7 @@ import _ from "lodash";
 import Query from "./resolvers/Query.js";
 import Mutation from "./resolvers/Mutations.js";
 import Subscription from "./resolvers/Subscription.js";
+import Bid from "./resolvers/Bid.js";
 const mySchema = importAsString("./schema.graphql");
 
 var _context = null;
@@ -11,7 +12,8 @@ var _context = null;
 const resolvers = {
   Query,
   Mutation,
-  Subscription
+  Subscription,
+  Bid
 };
 
 function biddingStartUp(context) {

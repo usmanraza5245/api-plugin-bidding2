@@ -15,7 +15,7 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 export default async function placeBidOnProduct(context, args) {
   const { collections } = context;
   const { Bids } = collections;
-  const { shopId, productId, offer ,variantId,soldby} = args;
+  const { shopId, productId, offer ,variantId,soldby,offerType} = args;
   let accountId = context.userId;
   let decodeProductId = decodeOpaqueId(productId).id;
   let decodeVariantId = decodeOpaqueId(variantId).id;
@@ -41,10 +41,17 @@ export default async function placeBidOnProduct(context, args) {
     createdBy: accountId,
     createdAt: new Date(),
     updatedAt: new Date(),
+    offerBy:accountId,
+    canAccept:soldby,
+    activeOffer:{ ...offer, createdBy: accountId,_id: await generateUID(),createdFor:soldby,
+      createdAt: new Date(),
+      type:offerType
+    },
     status: "new",
     soldBy:soldby,
     offers: [{ ...offer, createdBy: accountId,_id: await generateUID(),createdFor:soldby,
       createdAt: new Date(),
+      type:offerType
     }],
   };
   let BidsAdded = await Bids.insertOne(insert_obj);
