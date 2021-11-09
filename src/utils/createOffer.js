@@ -42,7 +42,7 @@ export default async function createOffer(context, args) {
         },
         $set:{
           activeOffer: offerObj,
-  
+          canAccept:to
         }
       }
     );  
