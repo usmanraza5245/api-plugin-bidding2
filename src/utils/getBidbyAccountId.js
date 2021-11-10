@@ -15,8 +15,10 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 export default async function getBidbyAccountId(context, args) {
   const { collections } = context;
   const { Bids } = collections;
-  const { userId } = args;
+  const { userId,isSeller } = args;
   let accountId = context.userId;
-  let bids = await Bids.find({ createdBy: accountId, soldBy: userId }).toArray();
+  let bids = null;
+  if(isSeller){ bids = await Bids.find({ createdBy: accountId, soldBy: userId }).toArray();}
+  else{ bids = await Bids.find({ createdBy: userId, soldBy: accountId }).toArray();}
   return bids;
 }

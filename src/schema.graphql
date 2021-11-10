@@ -32,11 +32,19 @@ extend type Query {
   getBidsbyAccountId: [Bid]
   getBidsbySellerId: [Bid]
   getActiveBidOnProduct(input: activeBidInput): activeBidPayLoad
-  getBidsbyUserId(userId: ID!): [Bid]
+  getBidsbyUserId(userId: ID!,isSeller:Boolean!): [Bid]
 }
 
 extend type Subscription {
-  offer(bidId: ID!): Offer!
+  offer(userId:ID!): offerSubscriptionPayload
+  
+}
+type offerSubscriptionPayload {
+  offer:Offer!
+  bidId:ID
+  productId:ID
+  variantId:ID
+  userId:ID
 }
 extend type Mutation {
   placeBidOnProduct(input: placeBidInput): placeBidPayLoad

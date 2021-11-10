@@ -3,14 +3,14 @@ export default {
     offer: {
         subscribe:  function subscribe(parent, args, context, info) {
    
-        let {bidId}=args;
+        let {userId}=args;
         console.log("onNewOffer subscription")
         // console.log(args);
         // console.log(info);
         let {pubSub}=context;
-        console.log(`newOffer ${bidId}`)
+        console.log(`newOffer ${userId}`)
         // return pubSub.asyncIterator(`newOffer`)
-        return pubSub.asyncIterator(`newOffer ${bidId}`)
+        return pubSub.asyncIterator(`${userId}`)
      
     }
 }
