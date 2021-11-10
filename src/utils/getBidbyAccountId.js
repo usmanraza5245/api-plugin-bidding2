@@ -2,7 +2,7 @@ import generateUID from "./generateUID.js";
 import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 /**
  *
- * @method placeBidOnProduct
+ * @method getBidbyAccountId
  * @summary Get all of a Unit's Variants or only a Unit's top level Variants.
  * @param {Object} context - an object containing the per-request state
  * @param {String} unitOrVariantId - A Unit or top level Unit Variant ID.
@@ -12,11 +12,11 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
  * @param {Boolean} args.shouldIncludeArchived - Include archived units in results
  * @returns {Promise<Object[]>} Array of Unit Variant objects.
  */
-export default async function getBidsbyAccountId(context, args) {
+export default async function getBidbyAccountId(context, args) {
   const { collections } = context;
   const { Bids } = collections;
-  const { shopId, productId, offer ,variantId,soldby} = args;
+  const { userId } = args;
   let accountId = context.userId;
- let bids= await Bids.find({$or: [{"createdBy":accountId},{"soldBy":accountId}]}).toArray();
- return bids;
+  let bids = await Bids.find({ createdBy: accountId, soldBy: userId }).toArray();
+  return bids;
 }

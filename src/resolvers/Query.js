@@ -1,4 +1,5 @@
 import getBidsbyAccountId from "../utils/getBidsbyAccountId.js";
+import getBidbyAccountId from "../utils/getBidbyAccountId.js";
 import getBidsbySellerId from "../utils/getBidsbySellerId.js";
 import getActiveBids from "../utils/getActiveBids.js";
 export default {
@@ -45,5 +46,11 @@ export default {
     } else {
       return null;
     }
+  },
+  async getBidsbyUserId(parent, args, context, info) {
+    console.log("getBidsbyUserList");
+    let user_bid=await getBidbyAccountId(context,args);
+    console.log("user_bid",user_bid);
+    return user_bid;
   },
 };

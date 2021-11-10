@@ -6,6 +6,7 @@ type Bid implements Node {
   createdAt: DateTime
   status: String
   offerBy: ID
+  activeOffer:Offer
   canAccept: ID
   offers: [Offer]
   acceptedOffer: Offer
@@ -31,7 +32,9 @@ extend type Query {
   getBidsbyAccountId: [Bid]
   getBidsbySellerId: [Bid]
   getActiveBidOnProduct(input: activeBidInput): activeBidPayLoad
+  getBidsbyUserId(userId: ID!): [Bid]
 }
+
 extend type Subscription {
   offer(bidId: ID!): Offer!
 }
@@ -43,10 +46,9 @@ input activeBidInput {
   productId: ID!
   variantId: ID!
 }
-type activeBidPayLoad  {
-  
-  offer:Offer
-  isValid:Boolean
+type activeBidPayLoad {
+  offer: Offer
+  isValid: Boolean
 }
 type placeBidPayLoad {
   bidId: ID
