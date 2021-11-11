@@ -18,7 +18,12 @@ export default async function getBidbyAccountId(context, args) {
   const { userId,isSeller } = args;
   let accountId = context.userId;
   let bids = null;
-  if(isSeller){ bids = await Bids.find({ createdBy: accountId, soldBy: userId }).toArray();}
-  else{ bids = await Bids.find({ createdBy: userId, soldBy: accountId }).toArray();}
+  if(isSeller)
+  {
+    bids = await Bids.find({ createdBy: userId, soldBy: accountId }).toArray();
+}
+  else{
+    bids = await Bids.find({ createdBy: accountId, soldBy: userId }).toArray();
+    }
   return bids;
 }

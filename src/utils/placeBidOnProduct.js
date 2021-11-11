@@ -56,6 +56,11 @@ export default async function placeBidOnProduct(context, args) {
   };
   let BidsAdded = await Bids.insertOne(insert_obj);
   if (BidsAdded.insertedId) {
+    pubSub.publish(`${to}`, { offer: {offer:{ ...offer, createdBy: accountId,_id: await generateUID(),createdFor:soldby,
+      createdAt: new Date(),
+      type:offerType
+    },variantId:variantId,productId:productId,bidId:BidsAdded.insertedId,userId:soldby }});
+
     return BidsAdded.insertedId;
     // return Bids.findOne({"_id":BidsAdded.insertedId});
   } else {
