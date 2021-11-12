@@ -13,7 +13,7 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
  * @returns {Promise<Object[]>} Array of Unit Variant objects.
  */
 export default async function placeBidOnProduct(context, args) {
-  const { collections } = context;
+  const { collections,pubSub } = context;
   const { Bids } = collections;
   const { shopId, productId, offer ,variantId,soldby,offerType} = args;
   let accountId = context.userId;
