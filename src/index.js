@@ -5,6 +5,7 @@ import Query from "./resolvers/Query.js";
 import Mutation from "./resolvers/Mutations.js";
 import Subscription from "./resolvers/Subscription.js";
 import Bid from "./resolvers/Bid.js";
+import Offer from "./resolvers/Offer.js";
 const mySchema = importAsString("./schema.graphql");
 
 var _context = null;
@@ -13,7 +14,8 @@ const resolvers = {
   Query,
   Mutation,
   Subscription,
-  Bid
+  Bid,
+  Offer
 };
 
 function biddingStartUp(context) {
