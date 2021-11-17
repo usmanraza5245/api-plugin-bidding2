@@ -39,7 +39,7 @@ export default {
         is_valid = true;
       }
       if (is_valid) {
-        return { offer: activeBids.acceptedOffer, isValid: is_valid };
+        return { offer: activeBids.acceptedOffer, isValid: is_valid,bidId:activeBids._id };
       } else {
         return null;
       }

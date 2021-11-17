@@ -58,6 +58,7 @@ input activeBidInput {
   variantId: ID!
 }
 type activeBidPayLoad {
+  bidId:ID!
   offer: Offer
   isValid: Boolean
 }
