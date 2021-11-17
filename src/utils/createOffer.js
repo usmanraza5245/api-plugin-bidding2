@@ -14,7 +14,7 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
  */
 export default async function createOffer(context, args) {
   const { collections, pubSub } = context;
-  const { Bids,Accounts } = collections;
+  const { Bids, Cart } = collections;
   const { bidId, offer, to, type } = args;
   let accountId = context.userId;
   if (!bidId || bidId.length == 0) {
@@ -33,76 +33,87 @@ export default async function createOffer(context, args) {
     createdFor: to,
   };
   let bid_update = null;
-  if(type=="counterOffer"){
-    bid_update =await Bids.updateOne(
+  if (type == "counterOffer") {
+    bid_update = await Bids.updateOne(
       { _id: bidId },
       {
         $addToSet: {
           offers: offerObj,
-          
         },
-        $set:{
+        $set: {
           activeOffer: offerObj,
-          status:"inProgress",
-          canAccept:to
-        }
+          status: "inProgress",
+          canAccept: to,
+        },
       }
-    );  
-  }
-  else if(type=="acceptedOffer"){
+    );
+  } else if (type == "acceptedOffer") {
     const date = new Date();
     date.setDate(date.getDate() + 1);
     let valid_till = date;
+    let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
+    if(cartExist){
 
-    bid_update =await Bids.updateOne(
-      { _id: bidId },
-      {
-        $addToSet: {
-          offers: offerObj,
-        },
-        $set:{
-          acceptedOffer: {...offerObj,validTill:valid_till},
-          acceptedBy:accountId,
-          canAccept:null,
-          status:"closed"
-        }
+      let productExist = cartExist.items[0]._id == bidExist.productId;
+      if(productExist){
+
+        let cart_update = await Cart.updateOne(
+          { _id: cartExist._id },
+          { $set: { "items.0.price.amount": bidExist.activeOffer.amount.amount,
+          "items.0.subtotal.amount": bidExist.activeOffer.amount.amount }});
       }
-    );  
-  }
-  else if(type=="rejectOffer"){
- 
-    bid_update =await Bids.updateOne(
+      
+    }
+    bid_update = await Bids.updateOne(
       { _id: bidId },
       {
         $addToSet: {
           offers: offerObj,
         },
-        $set:{
-          status:"closed"
-
-        }
+        $set: {
+          acceptedOffer: { ...bidExist.activeOffer, validTill: valid_till },
+          acceptedBy: accountId,
+          canAccept: null,
+          status: "closed",
+        },
+      }
+    );
+  } else if (type == "rejectOffer") {
+    bid_update = await Bids.updateOne(
+      { _id: bidId },
+      {
+        $addToSet: {
+          offers: offerObj,
+        },
+        $set: {
+          status: "closed",
+        },
+      }
+    );
+  } else {
+    bid_update = await Bids.updateOne(
+      { _id: bidId },
+      {
+        $addToSet: {
+          offers: offerObj,
+        },
+        $set: {
+          status: "inProgress",
+        },
       }
     );
   }
-  else{
-    bid_update =await Bids.updateOne(
-      { _id: bidId },
-      {
-        $addToSet: {
-          offers: offerObj,
-        },
-        $set:{
-          status:"inProgress"
 
-        }
-      }
-    );
-  
-  }
-  
   if (bid_update.modifiedCount) {
-    console.log("offerObj",offerObj)
-    pubSub.publish(`offers ${to}`, { offer: {offer:offerObj,variantId:bidExist.variantId,productId:bidExist.productId,bidId:bidExist._id,userId:to }});
+    pubSub.publish(`offers ${to}`, {
+      offer: {
+        offer: offerObj,
+        variantId: bidExist.variantId,
+        productId: bidExist.productId,
+        bidId: bidExist._id,
+        userId: to,
+      },
+    });
 
     return offerObj;
   } else {
