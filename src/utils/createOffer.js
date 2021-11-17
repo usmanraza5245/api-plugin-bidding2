@@ -102,7 +102,7 @@ export default async function createOffer(context, args) {
   
   if (bid_update.modifiedCount) {
     console.log("offerObj",offerObj)
-    pubSub.publish(`${to}`, { offer: {offer:offerObj,variantId:bidExist.variantId,productId:bidExist.productId,bidId:bidExist._id,userId:to }});
+    pubSub.publish(`offers ${to}`, { offer: {offer:offerObj,variantId:bidExist.variantId,productId:bidExist.productId,bidId:bidExist._id,userId:to }});
 
     return offerObj;
   } else {
