@@ -52,7 +52,7 @@ export default async function createOffer(context, args) {
     date.setDate(date.getDate() + 1);
     let valid_till = date;
     let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
-    if(cartExist){
+    if(cartExist&&cartExist.items[0]){
 
       let productExist = cartExist.items[0]._id == bidExist.productId;
       if(productExist){

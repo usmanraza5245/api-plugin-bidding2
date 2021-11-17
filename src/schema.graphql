@@ -50,7 +50,9 @@ type offerSubscriptionPayload {
 extend type Mutation {
   placeBidOnProduct(input: placeBidInput): placeBidPayLoad
   sendOffer(input: sendOfferInput): Offer
+  updateCartOfferPrice(cartId:ID!,bidId:ID!): Cart
 }
+
 input activeBidInput {
   productId: ID!
   variantId: ID!

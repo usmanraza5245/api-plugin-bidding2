@@ -1,5 +1,6 @@
 import placeBidOnProduct  from "../utils/placeBidOnProduct.js";
 import createOffer  from "../utils/createOffer.js";
+import addOfferPriceToCart from "../utils/addOfferPriceToCart.js"
 export default {
   async placeBidOnProduct(parent, args, context, info) {
 
@@ -20,5 +21,18 @@ export default {
       let offer=await createOffer(context,args.input)
 
       return offer;
+  },
+  async updateCartOfferPrice(parent,args,context,info){
+    console.log("updateCartOfferPrice");
+    let accountId=context.userId;
+    if(!accountId||accountId==null){
+      console.log("Unauthenticated user");
+      throw new Error("Unauthenticated user");
   }
+    let price_Updated=await addOfferPriceToCart(context,args);
+  return price_Updated;
+
+  }
+
+  
 };
