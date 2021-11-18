@@ -31,7 +31,7 @@ export default async function addOfferPriceToCart(context, args) {
   let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
   if(cartExist&&cartExist.items[0]){
 
-    let productExist = cartExist.items[0]._id == bidExist.productId;
+    let productExist = cartExist.items[0].productId == bidExist.productId;
     if(productExist){
 
        cart_update = await Cart.updateOne(
