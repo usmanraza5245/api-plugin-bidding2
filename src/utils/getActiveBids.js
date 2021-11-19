@@ -26,11 +26,11 @@ export default async function getActiveBids(context, args) {
   if (decodeVariantId == variantId || variantId.length == 0) {
     throw new Error("variantId must be a Reaction ID");
   }
+  console.log("accountId",accountId)
   let bids_active = await Bids.findOne({
     createdBy: accountId,
     productId: decodeProductId,
-    variantId: decodeVariantId,
-    status: "closed",
+    variantId: decodeVariantId
   });
   return bids_active;
 }
