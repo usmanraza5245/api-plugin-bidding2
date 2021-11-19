@@ -24,7 +24,7 @@ type Offer implements Node {
   createdAt: DateTime
   sender: createdByUserinfo
   createdBy: ID
-  offerType:offerTypes
+  type:offerTypes
   status: String
   reciever: createdByUserinfo
   createdFor: ID
