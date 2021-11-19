@@ -33,6 +33,8 @@ export default async function placeBidOnProduct(context, args) {
   if (decodeProductId == productId || productId.length == 0) {
     throw new Error("ProductId must be a Reaction ID");
   }
+  let contactExists=await Bids.findOne({$and:[{createdBy:accountId},{soldBy:soldby}]});
+
   let insert_obj = {
     _id: new_id,
     productId: decodeProductId,
@@ -56,7 +58,16 @@ export default async function placeBidOnProduct(context, args) {
   };
   let BidsAdded = await Bids.insertOne(insert_obj);
   if (BidsAdded.insertedId) {
-    pubSub.publish(`newBids ${soldby}`, { newBid: insert_obj});
+    if(!contactExists){
+    console.log("new ",contactExists)
+
+      pubSub.publish(`newBids ${soldby}`, { newBid: insert_obj});
+
+    }
+    else{
+    console.log("contactExists",contactExists)
+
+    }
 
     return BidsAdded.insertedId;
     // return Bids.findOne({"_id":BidsAdded.insertedId});

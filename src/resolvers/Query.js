@@ -41,7 +41,7 @@ export default {
       if (is_valid) {
         return { offer: activeBids.acceptedOffer, isValid: is_valid,bidId:activeBids._id };
       } else {
-        return { bidId:activeBids._id,offer:null };
+        return { bidId:activeBids._id,offer:null,isValid:is_valid };
       }
     } else {
       return null;
