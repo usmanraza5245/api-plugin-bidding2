@@ -109,6 +109,7 @@ export default async function createOffer(context, args) {
       offer: {
         offer: offerObj,
         offerType:type,
+        canAccept:to,
         variantId: bidExist.variantId,
         productId: bidExist.productId,
         bidId: bidExist._id,

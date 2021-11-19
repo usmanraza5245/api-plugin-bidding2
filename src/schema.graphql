@@ -45,6 +45,7 @@ type offerSubscriptionPayload {
   offer:Offer!
   offerType:offerTypes!
   bidId:ID
+  canAccept:ID
   productId:ID
   variantId:ID
   userId:ID
