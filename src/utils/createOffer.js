@@ -108,7 +108,7 @@ export default async function createOffer(context, args) {
     pubSub.publish(`offers ${to}`, {
       offer: {
         offer: offerObj,
-        offerType:offerObj.type,
+        offerType:type,
         variantId: bidExist.variantId,
         productId: bidExist.productId,
         bidId: bidExist._id,
