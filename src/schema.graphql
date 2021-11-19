@@ -42,6 +42,7 @@ extend type Subscription {
 }
 type offerSubscriptionPayload {
   offer:Offer!
+  offerType:offerType!
   bidId:ID
   productId:ID
   variantId:ID
