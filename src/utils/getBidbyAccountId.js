@@ -20,10 +20,10 @@ export default async function getBidbyAccountId(context, args) {
   let bids = null;
   if(isSeller)
   {
-    bids = await Bids.find({ createdBy: userId, soldBy: accountId }).sort({"updatedAt":-1}).limit(1).toArray();
+    bids = await Bids.find({ createdBy: userId, soldBy: accountId }).toArray();
 }
   else{
-    bids = await Bids.find({ createdBy: accountId, soldBy: userId }).sort({"updatedAt":-1}).limit(1).toArray();
+    bids = await Bids.find({ createdBy: accountId, soldBy: userId }).toArray();
     }
   return bids;
 }
