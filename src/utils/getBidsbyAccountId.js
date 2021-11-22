@@ -17,6 +17,6 @@ export default async function getBidsbyAccountId(context, args) {
   const { Bids } = collections;
   const { shopId, productId, offer ,variantId,soldby} = args;
   let accountId = context.userId;
- let bids= await Bids.find({$or: [{"createdBy":accountId},{"soldBy":accountId}]}).toArray();
+ let bids= await Bids.find({$or: [{"createdBy":accountId},{"soldBy":accountId}]}).sort({"updatedAt":-1}).limit(1).toArray();
  return bids;
 }

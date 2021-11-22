@@ -18,6 +18,6 @@ export default async function getBidsbySellerId(context, args) {
   const { bidId} = args;
   let accountId = context.userId;
   console.log("accountId",accountId);
- let bids= await Bids.find({"soldBy":accountId}).toArray();
+ let bids= await Bids.find({"soldBy":accountId}).sort({"updatedAt":-1}).limit(1).toArray();
  return bids;
 }
