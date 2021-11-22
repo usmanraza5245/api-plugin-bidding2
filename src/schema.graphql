@@ -28,6 +28,7 @@ type Offer implements Node {
   status: String
   reciever: createdByUserinfo
   createdFor: ID
+  canAccept: ID
 }
 extend type Query {
   getBidsbyAccountId: [Bid]

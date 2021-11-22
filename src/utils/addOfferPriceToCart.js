@@ -27,22 +27,32 @@ export default async function addOfferPriceToCart(context, args) {
   if (!bidExist) {
     throw new Error("invalid bid ID");
   }
-  let cart_update=null;
+  let cart_update = null;
   let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
-  if(cartExist&&cartExist.items[0]){
-
+  console.log("cartExist,", cartExist);
+  if (cartExist && cartExist.items[0]) {
     let productExist = cartExist.items[0].productId == bidExist.productId;
-    if(productExist){
+    console.log("productExist,", productExist);
 
-       cart_update = await Cart.updateOne(
+    if (productExist) {
+      cart_update = await Cart.updateOne(
         { _id: cartExist._id },
-        { $set: { "items.0.price.amount": bidExist.activeOffer.amount.amount,
-        "items.0.subtotal.amount": bidExist.activeOffer.amount.amount }});
+        {
+          $set: {
+            "items.0.price.amount": bidExist.activeOffer.amount.amount,
+            "items.0.subtotal.amount": bidExist.activeOffer.amount.amount,
+          },
+        }
+      );
+      console.log("cart_update,", cart_update);
+      console.log("s", {
+        "items.0.price.amount": bidExist.activeOffer.amount.amount,
+        "items.0.subtotal.amount": bidExist.activeOffer.amount.amount,
+      });
     }
-    
   }
   if (cart_update.modifiedCount) {
-  let updatedCart = await Cart.findOne({ accountId: bidExist.createdBy });
+    let updatedCart = await Cart.findOne({ accountId: bidExist.createdBy });
 
     return updatedCart;
   } else {

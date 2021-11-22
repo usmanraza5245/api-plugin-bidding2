@@ -28,10 +28,13 @@ export default {
       throw new Error("Unauthenticated user");
     }
     let activeBids = await getActiveBids(context, args.input);
+    console.log("active bid",activeBids);
     let is_valid = false;
 
     if (activeBids) {
+      console.log("inside fist if active bid");
       if(activeBids.acceptedOffer){
+        console.log("offer accepted");
         var d1 = new Date();
         var d2 = new Date(activeBids.acceptedOffer.validTill);
         console.log(d1.getTime() <= d2.getTime());
@@ -39,16 +42,20 @@ export default {
           is_valid = true;
         }
         if (is_valid) {
+          console.log("offer valid");
           return { offer: activeBids.acceptedOffer, isValid: is_valid,bidId:activeBids._id };
         } else {
+          console.log("offer exist not valid");
           return null;
         }
       }
      
      else {
+      console.log("bid exist offer not aqccepted");
         return { bidId:activeBids._id,offer:null,isValid:is_valid };
       }
     } else {
+      console.log("no bid exist");
       return null;
     }
   },

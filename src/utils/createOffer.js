@@ -53,7 +53,7 @@ export default async function createOffer(context, args) {
     let valid_till = date;
     let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
     if(cartExist&&cartExist.items[0]){
-
+      console.log("accept offer to check cart",cartExist.items[0]._id , bidExist.productId,cartExist.items[0]._id == bidExist.productId)
       let productExist = cartExist.items[0]._id == bidExist.productId;
       if(productExist){
 
@@ -107,7 +107,7 @@ export default async function createOffer(context, args) {
   if (bid_update.modifiedCount) {
     pubSub.publish(`offers ${to}`, {
       offer: {
-        offer: offerObj,
+        offer:  {...offerObj,canAccept: to},
         offerType:type,
         canAccept:to,
         variantId: bidExist.variantId,
@@ -117,7 +117,7 @@ export default async function createOffer(context, args) {
       },
     });
 
-    return offerObj;
+    return {...offerObj,canAccept: to};
   } else {
     throw new Error("Something went wrong");
   }
