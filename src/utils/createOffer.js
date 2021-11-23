@@ -1,5 +1,6 @@
 import generateUID from "./generateUID.js";
 import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
+import coinToss from "./coinToss.js";
 /**
  *
  * @method placeBidOnProduct
@@ -17,6 +18,7 @@ export default async function createOffer(context, args) {
   const { Bids, Cart } = collections;
   const { bidId, offer, to, type } = args;
   let accountId = context.userId;
+  let coinResponse=null;
   if (!bidId || bidId.length == 0) {
     throw new Error("bidId is required");
   }
@@ -90,6 +92,54 @@ export default async function createOffer(context, args) {
         },
       }
     );
+  } else if (type == "gameRequest") {
+    bid_update = await Bids.updateOne(
+      { _id: bidId },
+      {
+        $addToSet: {
+          offers: offerObj,
+        },
+        $set: {
+          gameCanAccept: to,
+          activeOffer: offerObj,
+          status: "inProgress"
+        },
+      }
+    );
+  }
+  else if (type == "rejectedGame") {
+    bid_update = await Bids.updateOne(
+      { _id: bidId },
+      {
+        $addToSet: {
+          offers: offerObj,
+        },
+        $set: {
+          gameCanAccept: null,
+          activeGame:null
+        },
+      }
+    );
+  }
+  else if (type == "acceptedGame") {
+     coinResponse=await coinToss(context);
+    console.log("coin response",coinResponse,offerObj.text);
+    
+    bid_update = await Bids.updateOne(
+      { _id: bidId },
+      {
+        $addToSet: {
+          offers: offerObj,
+        },
+        $set: {
+          gameCanAccept: null,
+          acceptedGame:offerObj,
+          gameAcceptedBy:accountId,
+          gameAcceptedAt:new Date()
+        },
+      }
+    );
+    
   } else {
     bid_update = await Bids.updateOne(
       { _id: bidId },
@@ -105,6 +155,18 @@ export default async function createOffer(context, args) {
   }
 
   if (bid_update.modifiedCount) {
+    if(type=="acceptedGame"){
+      
+      pubSub.publish(`StartGame ${bidId}`, {
+        startCoinToss: {
+          result:coinResponse,
+          wonBy:"ID",
+          lostBy:"ID",
+          data:"String"
+        },
+      });
+
+    }
     pubSub.publish(`offers ${to}`, {
       offer: {
         offer:  {...offerObj,canAccept: to},

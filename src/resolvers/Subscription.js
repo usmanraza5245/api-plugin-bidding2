@@ -12,13 +12,22 @@ export default {
   },
   newBid: {
     subscribe: function subscribe(parent, args, context, info) {
-            console.log("newBid sibscribe")
+      console.log("newBid sibscribe");
       let { userId } = args;
 
       let { pubSub } = context;
-            
-            return pubSub.asyncIterator(`newBids ${userId}`);
 
-    }
+      return pubSub.asyncIterator(`newBids ${userId}`);
+    },
+  },
+  startCoinToss: {
+    subscribe: function subscribe(parent, args, context, info) {
+      console.log("startCoinToss sibscribe");
+      let { bidId } = args;
+
+      let { pubSub } = context;
+
+      return pubSub.asyncIterator(`StartGame ${bidId}`);
+    },
   },
 };

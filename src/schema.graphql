@@ -40,7 +40,14 @@ extend type Query {
 extend type Subscription {
   offer(userId:ID!): offerSubscriptionPayload
   newBid(userId:ID!): Bid
+  startCoinToss(bidId:ID!):coinTossSubscriptionPayload
   
+}
+type coinTossSubscriptionPayload {
+  result:String
+  wonBy:ID
+  lostBy:ID
+  data:String
 }
 type offerSubscriptionPayload {
   offer:Offer!
@@ -55,8 +62,24 @@ extend type Mutation {
   placeBidOnProduct(input: placeBidInput): placeBidPayLoad
   sendOffer(input: sendOfferInput): Offer
   updateCartOfferPrice(cartId:ID!,bidId:ID!): Cart
+  coinToss(input:coinTossInput):coinTossResult
 }
+input coinTossInput {
+  userSelection:coinTossOptions
+  bidId:ID
+  offerId:ID
+}
+enum coinTossOptions {
+  head
+  tail
+}
+type coinTossResult {
+  userSelection:String
+  winner:ID
+  loser:ID
+  acceptedOffer:Offer
 
+}
 input activeBidInput {
   productId: ID!
   variantId: ID!
@@ -94,5 +117,7 @@ enum offerTypes {
   counterOffer
   acceptedOffer
   rejectOffer
-  game
+  gameRequest
+  acceptedGame
+  rejectedGame
 }
