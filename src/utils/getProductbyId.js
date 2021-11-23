@@ -17,9 +17,5 @@ export default async function getProductbyId(context, args,bid) {
   const { Catalog } = collections;
   const {productId} = args;
  let product= await Catalog.findOne({"product._id":productId});
- let productVaraints=product.variants;
- if(productVaraints){
-  productVaraints.filter((item)=>{return item.variantId==bid.variantId})
- }
- return productVaraints.length>1?productVaraints[0]:null;
+ return product;
 }
