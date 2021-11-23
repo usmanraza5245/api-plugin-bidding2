@@ -12,10 +12,14 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
  * @param {Boolean} args.shouldIncludeArchived - Include archived units in results
  * @returns {Promise<Object[]>} Array of Unit Variant objects.
  */
-export default async function getProductbyId(context, args) {
+export default async function getProductbyId(context, args,bid) {
   const { collections } = context;
   const { Catalog } = collections;
   const {productId} = args;
  let product= await Catalog.findOne({"product._id":productId});
- return product;
+ let productVaraints=product.variants;
+ if(productVaraints){
+  productVaraints.filter((item)=>{return item.variantId==bid.variantId})
+ }
+ return productVaraints.length>1?productVaraints[0]:null;
 }
