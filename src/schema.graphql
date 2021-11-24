@@ -9,6 +9,10 @@ type Bid implements Node {
   activeOffer:Offer
   canAccept: ID
   offers: [Offer]
+  gameCanAccept:ID
+  acceptedGame:Offer
+  gameAcceptedAt :DateTime
+  gameAcceptedBy:ID
   acceptedOffer: Offer
   shopId: ID!
   createdBy: ID
