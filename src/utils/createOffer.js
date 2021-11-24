@@ -18,7 +18,9 @@ export default async function createOffer(context, args) {
   const { Bids, Cart } = collections;
   const { bidId, offer, to, type } = args;
   let accountId = context.userId;
-  let coinResponse=null;
+  let coinResponse = null;
+  let winnerId,
+    loserId = null;
   if (!bidId || bidId.length == 0) {
     throw new Error("bidId is required");
   }
@@ -54,17 +56,25 @@ export default async function createOffer(context, args) {
     date.setDate(date.getDate() + 1);
     let valid_till = date;
     let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
-    if(cartExist&&cartExist.items[0]){
-      console.log("accept offer to check cart",cartExist.items[0]._id , bidExist.productId,cartExist.items[0]._id == bidExist.productId)
+    if (cartExist && cartExist.items[0]) {
+      console.log(
+        "accept offer to check cart",
+        cartExist.items[0]._id,
+        bidExist.productId,
+        cartExist.items[0]._id == bidExist.productId
+      );
       let productExist = cartExist.items[0]._id == bidExist.productId;
-      if(productExist){
-
+      if (productExist) {
         let cart_update = await Cart.updateOne(
           { _id: cartExist._id },
-          { $set: { "items.0.price.amount": bidExist.activeOffer.amount.amount,
-          "items.0.subtotal.amount": bidExist.activeOffer.amount.amount }});
+          {
+            $set: {
+              "items.0.price.amount": bidExist.activeOffer.amount.amount,
+              "items.0.subtotal.amount": bidExist.activeOffer.amount.amount,
+            },
+          }
+        );
       }
-      
     }
     bid_update = await Bids.updateOne(
       { _id: bidId },
@@ -76,6 +86,7 @@ export default async function createOffer(context, args) {
           acceptedOffer: { ...bidExist.activeOffer, validTill: valid_till },
           acceptedBy: accountId,
           canAccept: null,
+          acceptAction:"user_action",
           status: "closed",
         },
       }
@@ -102,12 +113,11 @@ export default async function createOffer(context, args) {
         $set: {
           gameCanAccept: to,
           activeOffer: offerObj,
-          status: "inProgress"
+          status: "inProgress",
         },
       }
     );
-  }
-  else if (type == "rejectedGame") {
+  } else if (type == "rejectedGame") {
     bid_update = await Bids.updateOne(
       { _id: bidId },
       {
@@ -116,30 +126,87 @@ export default async function createOffer(context, args) {
         },
         $set: {
           gameCanAccept: null,
-          activeGame:null
+          activeGame: null,
         },
       }
     );
-  }
-  else if (type == "acceptedGame") {
-     coinResponse=await coinToss(context);
-    console.log("coin response",coinResponse,offerObj.text);
-    
-    bid_update = await Bids.updateOne(
-      { _id: bidId },
-      {
-        $addToSet: {
-          offers: offerObj,
-        },
-        $set: {
-          gameCanAccept: null,
-          acceptedGame:offerObj,
-          gameAcceptedBy:accountId,
-          gameAcceptedAt:new Date()
-        },
+  } else if (type == "acceptedGame") {
+    coinResponse = await coinToss(context);
+    console.log("coin response", coinResponse, offerObj.text);
+    if (coinResponse.toLowerCase() == offerObj.text.toLowerCase()) {
+      winnerId = accountId;
+      loserId = to;
+    } else {
+      winnerId = to;
+
+      loserId = accountId;
+    }
+
+    if (winnerId == accountId) {
+      const date = new Date();
+      date.setDate(date.getDate() + 1);
+      let valid_till = date;
+      let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
+      if (cartExist && cartExist.items[0]) {
+        console.log(
+          "accept offer to check cart",
+          cartExist.items[0]._id,
+          bidExist.productId,
+          cartExist.items[0]._id == bidExist.productId
+        );
+        let productExist = cartExist.items[0]._id == bidExist.productId;
+        if (productExist) {
+          let cart_update = await Cart.updateOne(
+            { _id: cartExist._id },
+            {
+              $set: {
+                "items.0.price.amount": bidExist.activeOffer.amount.amount,
+                "items.0.subtotal.amount": bidExist.activeOffer.amount.amount,
+              },
+            }
+          );
+        }
       }
-    );
-    
+      bid_update = await Bids.updateOne(
+        { _id: bidId },
+        {
+          $addToSet: {
+            offers: offerObj,
+          },
+          $set: {
+            gameCanAccept: null,
+            acceptedGame: offerObj,
+            gameAcceptedBy: accountId,
+            gameAcceptedAt: new Date(),
+            wonBy: winnerId,
+            lostBy: loserId,
+            acceptedOffer: { ...bidExist.activeOffer, validTill: valid_till },
+            acceptedBy: accountId,
+            acceptAction:"game",
+            canAccept: null,
+            status: "closed",
+          },
+        }
+      );
+    } else {
+      // game lost
+      bid_update = await Bids.updateOne(
+        { _id: bidId },
+        {
+          $addToSet: {
+            offers: offerObj,
+          },
+          $set: {
+            gameCanAccept: null,
+            acceptedGame: offerObj,
+            gameAcceptedBy: accountId,
+            wonBy: winnerId,
+            lostBy: loserId,
+            gameAcceptedAt: new Date(),
+          },
+        }
+      );
+    }
   } else {
     bid_update = await Bids.updateOne(
       { _id: bidId },
@@ -155,23 +222,22 @@ export default async function createOffer(context, args) {
   }
 
   if (bid_update.modifiedCount) {
-    if(type=="acceptedGame"){
-      
+    if (type == "acceptedGame") {
       pubSub.publish(`StartGame ${bidId}`, {
         startCoinToss: {
-          result:coinResponse,
-          wonBy:"ID",
-          lostBy:"ID",
-          data:"String"
+          result: coinResponse,
+          wonBy: winnerId,
+          lostBy: loserId,
+          data: "String",
         },
       });
-
     }
     pubSub.publish(`offers ${to}`, {
       offer: {
-        offer:  {...offerObj,canAccept: to},
-        offerType:type,
-        canAccept:to,
+        offer: { ...offerObj, canAccept: to },
+        offerType: type,
+        canAccept: to,
+        canAcceptGame: to,
         variantId: bidExist.variantId,
         productId: bidExist.productId,
         bidId: bidExist._id,
@@ -179,7 +245,7 @@ export default async function createOffer(context, args) {
       },
     });
 
-    return {...offerObj,canAccept: to};
+    return { ...offerObj, canAccept: to };
   } else {
     throw new Error("Something went wrong");
   }

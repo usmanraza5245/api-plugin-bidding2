@@ -58,6 +58,7 @@ type offerSubscriptionPayload {
   offerType:offerTypes!
   bidId:ID
   canAccept:ID
+  canAcceptGame:ID
   productId:ID
   variantId:ID
   userId:ID
