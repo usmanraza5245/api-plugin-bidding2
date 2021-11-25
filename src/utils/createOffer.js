@@ -2,6 +2,7 @@ import generateUID from "./generateUID.js";
 import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 import coinToss from "./coinToss.js";
 import getProductbyId from "./getProductbyId.js";
+import createNotification from "./createNotification.js";
 
 /**
  *
@@ -27,11 +28,12 @@ export default async function createOffer(context, args) {
     throw new Error("bidId is required");
   }
   let bidExist = await Bids.findOne({ _id: bidId });
-  let product =await getProductbyId(context,{productId:bidExist.productId});
 
   if (!bidExist) {
     throw new Error("invalid bid ID");
   }
+  let product =await getProductbyId(context,{productId:bidExist.productId});
+
   let offerObj = {
     ...offer,
     type: type,
