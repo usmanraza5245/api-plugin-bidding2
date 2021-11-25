@@ -1,6 +1,8 @@
 import generateUID from "./generateUID.js";
 import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 import coinToss from "./coinToss.js";
+import getProductbyId from "./getProductbyId.js";
+
 /**
  *
  * @method placeBidOnProduct
@@ -25,6 +27,8 @@ export default async function createOffer(context, args) {
     throw new Error("bidId is required");
   }
   let bidExist = await Bids.findOne({ _id: bidId });
+  let product =await getProductbyId(context,{productId:bidExist.productId});
+
   if (!bidExist) {
     throw new Error("invalid bid ID");
   }
@@ -51,6 +55,9 @@ export default async function createOffer(context, args) {
         },
       }
     );
+
+    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Placed a new offer of ${offer.amount.amount} on ${product.product.title}`, status:"unread", to:to, type:"offer"})
+
   } else if (type == "acceptedOffer") {
     const date = new Date();
     date.setDate(date.getDate() + 1);
@@ -76,6 +83,8 @@ export default async function createOffer(context, args) {
         );
       }
     }
+    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Accepted your offer of ${bidExist.activeOffer.amount.amount} on ${product.product.title}`, status:"unread", to:to, type:"offer"})
+
     bid_update = await Bids.updateOne(
       { _id: bidId },
       {
@@ -104,6 +113,8 @@ export default async function createOffer(context, args) {
       }
     );
   } else if (type == "gameRequest") {
+    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Sent you a game request on ${product.product.title}`, status:"unread", to:to, type:"offer"})
+
     bid_update = await Bids.updateOne(
       { _id: bidId },
       {
@@ -118,6 +129,8 @@ export default async function createOffer(context, args) {
       }
     );
   } else if (type == "rejectedGame") {
+    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Rejected your game request on ${product.product.title}`, status:"unread", to:to, type:"offer"})
+
     bid_update = await Bids.updateOne(
       { _id: bidId },
       {
@@ -131,6 +144,8 @@ export default async function createOffer(context, args) {
       }
     );
   } else if (type == "acceptedGame") {
+    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Accepted your game request on ${product.product.title}`, status:"unread", to:to, type:"offer"})
+
     coinResponse = await coinToss(context);
     console.log("coin response", coinResponse, offerObj.text);
     if (coinResponse.toLowerCase() == offerObj.text.toLowerCase()) {
@@ -208,6 +223,8 @@ export default async function createOffer(context, args) {
       );
     }
   } else {
+    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Sent you a new message ${product.product.title}`, status:"unread", to:to, type:"offer"})
+
     bid_update = await Bids.updateOne(
       { _id: bidId },
       {

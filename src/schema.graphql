@@ -6,13 +6,13 @@ type Bid implements Node {
   createdAt: DateTime
   status: String
   offerBy: ID
-  activeOffer:Offer
+  activeOffer: Offer
   canAccept: ID
   offers: [Offer]
-  gameCanAccept:ID
-  acceptedGame:Offer
-  gameAcceptedAt :DateTime
-  gameAcceptedBy:ID
+  gameCanAccept: ID
+  acceptedGame: Offer
+  gameAcceptedAt: DateTime
+  gameAcceptedBy: ID
   acceptedOffer: Offer
   shopId: ID!
   createdBy: ID
@@ -28,7 +28,7 @@ type Offer implements Node {
   createdAt: DateTime
   sender: createdByUserinfo
   createdBy: ID
-  type:offerTypes
+  type: offerTypes
   status: String
   reciever: createdByUserinfo
   createdFor: ID
@@ -37,60 +37,90 @@ type Offer implements Node {
 extend type Query {
   getBidsbyAccountId: [Bid]
   getBidsbySellerId: [Bid]
+  myNotifications: [Notification]
   getActiveBidOnProduct(input: activeBidInput): activeBidPayLoad
-  getBidsbyUserId(userId: ID!,isSeller:Boolean!): [Bid]
+  getBidsbyUserId(userId: ID!, isSeller: Boolean!): [Bid]
+}
+type Notification {
+  _id: ID
+  details: String
+  hasDetails: Boolean
+  message: String
+  status: notificationStatus
+  timeSent: DateTime
+  to: ID!
+  from:ID!
+  sender:createdByUserinfo
+  type: notificationTypes
+  url: String
+}
+input createNotificationInput {
+  details: String
+  hasDetails: Boolean!
+  message: String!
+  to: ID!
+  type: notificationTypes!
 }
 
-extend type Subscription {
-  offer(userId:ID!): offerSubscriptionPayload
-  newBid(userId:ID!): Bid
-  startCoinToss(bidId:ID!):coinTossSubscriptionPayload
-  
+enum notificationTypes {
+  bid
+  offer
+  follow
+  newOrder
+  orderCanceled
+  orderAccepted
 }
+enum notificationStatus {
+  unread
+  read
+}
+extend type Subscription {
+  offer(userId: ID!): offerSubscriptionPayload
+  newBid(userId: ID!): Bid
+  startCoinToss(bidId: ID!): coinTossSubscriptionPayload
+  notifications(userId:ID!):Notification
+}
+
 type coinTossSubscriptionPayload {
-  result:String
-  wonBy:ID
-  lostBy:ID
-  data:String
+  result: String
+  wonBy: ID
+  lostBy: ID
+  data: String
 }
 type offerSubscriptionPayload {
-  offer:Offer!
-  offerType:offerTypes!
-  bidId:ID
-  canAccept:ID
-  canAcceptGame:ID
-  productId:ID
-  variantId:ID
-  userId:ID
+  offer: Offer!
+  offerType: offerTypes!
+  bidId: ID
+  canAccept: ID
+  canAcceptGame: ID
+  productId: ID
+  variantId: ID
+  userId: ID
 }
 extend type Mutation {
   placeBidOnProduct(input: placeBidInput): placeBidPayLoad
   sendOffer(input: sendOfferInput): Offer
-  updateCartOfferPrice(cartId:ID!,bidId:ID!): Cart
-  coinToss(input:coinTossInput):coinTossResult
+  updateCartOfferPrice(cartId: ID!, bidId: ID!): Cart
+  createNotification(input:createNotificationInput):Notification
+  markAsRead(notificationId:ID):Notification
 }
-input coinTossInput {
-  userSelection:coinTossOptions
-  bidId:ID
-  offerId:ID
-}
+
 enum coinTossOptions {
   head
   tail
 }
 type coinTossResult {
-  userSelection:String
-  winner:ID
-  loser:ID
-  acceptedOffer:Offer
-
+  userSelection: String
+  winner: ID
+  loser: ID
+  acceptedOffer: Offer
 }
 input activeBidInput {
   productId: ID!
   variantId: ID!
 }
 type activeBidPayLoad {
-  bidId:ID!
+  bidId: ID!
   offer: Offer
   isValid: Boolean
 }

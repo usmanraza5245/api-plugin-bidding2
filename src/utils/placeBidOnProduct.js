@@ -1,5 +1,8 @@
 import generateUID from "./generateUID.js";
 import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
+import createNotification from "./createNotification.js";
+import getProductbyId from "./getProductbyId.js";
+import getAccountById from "./getAccountById.js"
 /**
  *
  * @method placeBidOnProduct
@@ -62,13 +65,15 @@ export default async function placeBidOnProduct(context, args) {
     console.log("new ",contactExists)
 
       pubSub.publish(`newBids ${soldby}`, { newBid: insert_obj});
-
+      
     }
     else{
     console.log("contactExists",contactExists)
 
     }
-
+    let product =await getProductbyId(context,{productId:decodeProductId});
+    console.log("product for bid",product);
+    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Placed a bid of ${offer.displayAmount} on ${product.product.title}`, status:"unread", to:soldby, type:"bid"})
     return BidsAdded.insertedId;
     // return Bids.findOne({"_id":BidsAdded.insertedId});
   } else {

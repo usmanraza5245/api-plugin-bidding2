@@ -2,7 +2,7 @@ import generateUID from "./generateUID.js";
 import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 /**
  *
- * @method placeBidOnProduct
+ * @method markAsRead
  * @summary Get all of a Unit's Variants or only a Unit's top level Variants.
  * @param {Object} context - an object containing the per-request state
  * @param {String} unitOrVariantId - A Unit or top level Unit Variant ID.
@@ -12,12 +12,24 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
  * @param {Boolean} args.shouldIncludeArchived - Include archived units in results
  * @returns {Promise<Object[]>} Array of Unit Variant objects.
  */
-export default async function getProductbyId(context, args,bid) {
+export default async function markAsRead(context, args) {
   const { collections } = context;
-  const { Catalog } = collections;
-  const {productId} = args;
-  console.log('args',args)
-  console.log("product id for search",productId)
- let product= await Catalog.findOne({"product._id":productId});
- return product;
+  const { Notifications } = collections;
+  const { notificationId } = args;
+  console.log("update for ", notificationId);
+  let Notifications_update = await Notifications.updateOne(
+    { _id: notificationId },
+    {
+      $set: {
+        status: "read",
+      },
+    }
+  );
+  if (Notifications_update.modifiedCount) {
+    let nptif_res = await Notifications.findOne({ _id: notificationId });
+    console.log(nptif_res);
+    return nptif_res;
+  } else {
+    throw new Error("Something went wrong");
+  }
 }

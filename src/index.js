@@ -6,6 +6,7 @@ import Mutation from "./resolvers/Mutations.js";
 import Subscription from "./resolvers/Subscription.js";
 import Bid from "./resolvers/Bid.js";
 import Offer from "./resolvers/Offer.js";
+import Notification from "./resolvers/Notification.js";
 const mySchema = importAsString("./schema.graphql");
 
 var _context = null;
@@ -15,6 +16,7 @@ const resolvers = {
   Mutation,
   Subscription,
   Bid,
+  Notification,
   Offer
 };
 

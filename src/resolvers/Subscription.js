@@ -30,4 +30,15 @@ export default {
       return pubSub.asyncIterator(`StartGame ${bidId}`);
     },
   },
+  
+  notifications: {
+    subscribe: function subscribe(parent, args, context, info) {
+      console.log("notifications sibscribe");
+      let { userId } = args;
+
+      let { pubSub } = context;
+
+      return pubSub.asyncIterator(`notifications-${userId}`);
+    },
+  },
 };

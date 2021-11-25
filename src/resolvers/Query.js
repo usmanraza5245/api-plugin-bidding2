@@ -2,6 +2,7 @@ import getBidsbyAccountId from "../utils/getBidsbyAccountId.js";
 import getBidbyAccountId from "../utils/getBidbyAccountId.js";
 import getBidsbySellerId from "../utils/getBidsbySellerId.js";
 import getActiveBids from "../utils/getActiveBids.js";
+import getNotificationByAccountId from "../utils/getNotificationByAccountId.js";
 export default {
   async getBidsbyAccountId(parent, args, context, info) {
     let accountId = context.userId;
@@ -65,4 +66,10 @@ export default {
     console.log("user_bid",user_bid);
     return user_bid;
   },
+  async myNotifications(parent, args, context, info){
+  
+    console.log("myNotifications")
+    let myNotif=await getNotificationByAccountId(context);
+    return myNotif
+  }
 };
