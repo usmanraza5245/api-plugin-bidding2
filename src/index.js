@@ -7,6 +7,7 @@ import Subscription from "./resolvers/Subscription.js";
 import Bid from "./resolvers/Bid.js";
 import Offer from "./resolvers/Offer.js";
 import Notification from "./resolvers/Notification.js";
+import coinTossSubscriptionPayload from "./resolvers/coinTossSubscriptionPayload.js";
 const mySchema = importAsString("./schema.graphql");
 
 var _context = null;
@@ -14,6 +15,7 @@ var _context = null;
 const resolvers = {
   Query,
   Mutation,
+  coinTossSubscriptionPayload,
   Subscription,
   Bid,
   Notification,

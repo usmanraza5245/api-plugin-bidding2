@@ -84,6 +84,8 @@ extend type Subscription {
 type coinTossSubscriptionPayload {
   result: String
   wonBy: ID
+  wonByInfo:createdByUserinfo
+  lostByInfo:createdByUserinfo
   lostBy: ID
   data: String
   head:ID
