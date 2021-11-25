@@ -86,6 +86,8 @@ type coinTossSubscriptionPayload {
   wonBy: ID
   lostBy: ID
   data: String
+  head:ID
+  tail:ID
 }
 type offerSubscriptionPayload {
   offer: Offer!

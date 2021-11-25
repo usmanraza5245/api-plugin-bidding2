@@ -21,7 +21,8 @@ export default async function createOffer(context, args) {
   const { Bids, Cart } = collections;
   const { bidId, offer, to, type } = args;
   let accountId = context.userId;
-  let coinResponse = null;
+  let coinResponse = null;  let headUser= null;
+  let tailUser = null;
   let winnerId,
     loserId = null;
   if (!bidId || bidId.length == 0) {
@@ -147,7 +148,13 @@ export default async function createOffer(context, args) {
     );
   } else if (type == "acceptedGame") {
     createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Accepted your game request on ${product.product.title}`, status:"unread", to:to, type:"offer"})
-
+    if(offerObj.text.toLowerCase() == "head"){
+      headUser=accountId;
+      tailUser=to;
+    }else{
+      headUser=to;
+      tailUser=accountId;
+    }
     coinResponse = await coinToss(context);
     console.log("coin response", coinResponse, offerObj.text);
     if (coinResponse.toLowerCase() == offerObj.text.toLowerCase()) {
@@ -248,6 +255,8 @@ export default async function createOffer(context, args) {
           wonBy: winnerId,
           lostBy: loserId,
           data: "String",
+          head: headUser,
+          tail:tailUser
         },
       });
     }
