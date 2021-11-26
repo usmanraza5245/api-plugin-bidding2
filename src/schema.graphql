@@ -13,7 +13,6 @@ type Bid implements Node {
   offers: [Offer]
   gameCanAccept: ID
   acceptedGame: Offer
-  status:String
   gameAcceptedAt: DateTime
   gameAcceptedBy: ID
   acceptedOffer: Offer
