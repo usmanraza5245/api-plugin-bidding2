@@ -2,7 +2,7 @@ import generateUID from "./generateUID.js";
 import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 import createNotification from "./createNotification.js";
 import getProductbyId from "./getProductbyId.js";
-import getAccountById from "./getAccountById.js"
+import getAccountById from "./getAccountById.js";
 /**
  *
  * @method placeBidOnProduct
@@ -16,9 +16,9 @@ import getAccountById from "./getAccountById.js"
  * @returns {Promise<Object[]>} Array of Unit Variant objects.
  */
 export default async function placeBidOnProduct(context, args) {
-  const { collections,pubSub } = context;
+  const { collections, pubSub } = context;
   const { Bids } = collections;
-  const { shopId, productId, offer ,variantId,soldby,offerType} = args;
+  const { shopId, productId, offer, variantId, soldby, offerType } = args;
   let accountId = context.userId;
   let decodeProductId = decodeOpaqueId(productId).id;
   let decodeVariantId = decodeOpaqueId(variantId).id;
@@ -36,44 +36,67 @@ export default async function placeBidOnProduct(context, args) {
   if (decodeProductId == productId || productId.length == 0) {
     throw new Error("ProductId must be a Reaction ID");
   }
-  let contactExists=await Bids.findOne({$and:[{createdBy:accountId},{soldBy:soldby}]});
+  let contactExists = await Bids.findOne({
+    $and: [{ createdBy: accountId }, { soldBy: soldby }],
+  });
 
   let insert_obj = {
     _id: new_id,
     productId: decodeProductId,
-    variantId:decodeVariantId,
+    variantId: decodeVariantId,
     shopId: decodeShopId,
     createdBy: accountId,
     createdAt: new Date(),
     updatedAt: new Date(),
-    offerBy:accountId,
-    canAccept:soldby,
-    activeOffer:{ ...offer, createdBy: accountId,_id: await generateUID(),createdFor:soldby,
+    offerBy: accountId,
+    canAccept: soldby,
+    activeOffer: {
+      ...offer,
+      createdBy: accountId,
+      _id: await generateUID(),
+      createdFor: soldby,
       createdAt: new Date(),
-      type:offerType
+      type: offerType,
     },
     status: "new",
-    soldBy:soldby,
-    offers: [{ ...offer, createdBy: accountId,_id: await generateUID(),createdFor:soldby,
-      createdAt: new Date(),
-      type:offerType
-    }],
+    soldBy: soldby,
+    offers: [
+      {
+        ...offer,
+        createdBy: accountId,
+        _id: await generateUID(),
+        createdFor: soldby,
+        createdAt: new Date(),
+        type: offerType,
+      },
+    ],
   };
   let BidsAdded = await Bids.insertOne(insert_obj);
   if (BidsAdded.insertedId) {
-    if(!contactExists){
-    console.log("new ",contactExists)
+    if (!contactExists) {
+      console.log("new ", contactExists);
 
-      pubSub.publish(`newBids ${soldby}`, { newBid: insert_obj});
-      
+      pubSub.publish(`newBids ${soldby}`, { newBid: insert_obj });
+    } else {
+      if (
+        contactExists.productId != decodeProductId &&
+        contactExists.variantId != decodeVariantId
+      ) {
+        pubSub.publish(`newBids ${soldby}`, { newBid: insert_obj });
+      }
+      console.log("contactExists", contactExists);
     }
-    else{
-    console.log("contactExists",contactExists)
-
-    }
-    let product =await getProductbyId(context,{productId:decodeProductId});
-    console.log("product for bid",product);
-    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Placed a bid of ${offer.displayAmount} on ${product.product.title}`, status:"unread", to:soldby, type:"bid"})
+    let product = await getProductbyId(context, { productId: decodeProductId });
+    console.log("product for bid", product);
+    createNotification(context, {
+      details: null,
+      from: accountId,
+      hasDetails: false,
+      message: `Placed a bid of ${offer.displayAmount} on ${product.product.title}`,
+      status: "unread",
+      to: soldby,
+      type: "bid",
+    });
     return BidsAdded.insertedId;
     // return Bids.findOne({"_id":BidsAdded.insertedId});
   } else {
