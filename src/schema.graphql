@@ -1,7 +1,7 @@
 type Bid implements Node {
   _id: ID!
   productId: ID!
-  reacionProductId:ID!
+  productSlug:String!
   reactionVariantId:ID!
   product: ProductVariant
   updatedAt: DateTime

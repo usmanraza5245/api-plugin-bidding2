@@ -39,12 +39,13 @@ export default async function placeBidOnProduct(context, args) {
   let contactExists = await Bids.findOne({
     $and: [{ createdBy: accountId }, { soldBy: soldby }],
   });
+  let product = await getProductbyId(context, { productId: decodeProductId });
 
   let insert_obj = {
     _id: new_id,
+    productSlug:product?product.slug:null,
     productId: decodeProductId,
     variantId: decodeVariantId,
-    reacionProductId:productId,
     reactionVariantId:variantId,
     shopId: decodeShopId,
     createdBy: accountId,
@@ -88,7 +89,6 @@ export default async function placeBidOnProduct(context, args) {
       // }
       console.log("contactExists", contactExists);
     }
-    let product = await getProductbyId(context, { productId: decodeProductId });
     console.log("product for bid", product);
     createNotification(context, {
       details: null,
