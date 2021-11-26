@@ -18,6 +18,8 @@ type Bid implements Node {
   acceptedOffer: Offer
   shopId: ID!
   createdBy: ID
+  wonBy: ID
+  lostBy: ID
   createdByinfo: createdByUserinfo
   soldBy: ID
   soldByInfo: createdByUserinfo
