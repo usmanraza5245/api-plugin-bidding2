@@ -43,7 +43,7 @@ export default async function placeBidOnProduct(context, args) {
 
   let insert_obj = {
     _id: new_id,
-    productSlug:product?product.slug:null,
+    productSlug:product&&product.product?product.product.slug:null,
     productId: decodeProductId,
     variantId: decodeVariantId,
     reactionVariantId:variantId,
