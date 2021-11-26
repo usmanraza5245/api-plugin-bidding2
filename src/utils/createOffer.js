@@ -224,6 +224,7 @@ export default async function createOffer(context, args) {
             gameCanAccept: null,
             acceptedGame: offerObj,
             gameAcceptedBy: accountId,
+            status: "closed",
             wonBy: winnerId,
             lostBy: loserId,
             gameAcceptedAt: new Date(),
