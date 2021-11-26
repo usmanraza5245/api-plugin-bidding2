@@ -44,6 +44,8 @@ export default async function placeBidOnProduct(context, args) {
     _id: new_id,
     productId: decodeProductId,
     variantId: decodeVariantId,
+    reacionProductId:productId,
+    reactionVariantId:variantId,
     shopId: decodeShopId,
     createdBy: accountId,
     createdAt: new Date(),
