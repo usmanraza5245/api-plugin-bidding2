@@ -78,12 +78,12 @@ export default async function placeBidOnProduct(context, args) {
 
       pubSub.publish(`newBids ${soldby}`, { newBid: insert_obj });
     } else {
-      if (
-        contactExists.productId != decodeProductId &&
-        contactExists.variantId != decodeVariantId
-      ) {
-        pubSub.publish(`newBids ${soldby}`, { newBid: insert_obj });
-      }
+      // if (
+      //   contactExists.productId != decodeProductId &&
+      //   contactExists.variantId != decodeVariantId
+      // ) {
+      //   pubSub.publish(`newBids ${soldby}`, { newBid: insert_obj });
+      // }
       console.log("contactExists", contactExists);
     }
     let product = await getProductbyId(context, { productId: decodeProductId });
