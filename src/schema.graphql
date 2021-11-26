@@ -1,7 +1,7 @@
 type Bid implements Node {
   _id: ID!
   productId: ID!
-  product: CatalogProduct
+  product: ProductVariant
   updatedAt: DateTime
   createdAt: DateTime
   status: String

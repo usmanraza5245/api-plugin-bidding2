@@ -1,11 +1,12 @@
+import getVariantbyId from "../utils/getVariantbyId.js";
 import getProductbyId from "../utils/getProductbyId.js";
 import getAccountById from "../utils/getAccountById.js";
 export default {
 //   Bid: {
     async product(parent, args, context, info) {
-      console.log("bid product called");
-      let cat_product=await getProductbyId(context,parent);
-      return cat_product.product;
+      console.log("bid product called",parent);
+      let cat_product=await getVariantbyId(context,parent);
+      return cat_product;
     },
 
     async createdByinfo(parent, args, context, info) {
