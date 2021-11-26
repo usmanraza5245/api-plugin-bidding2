@@ -17,6 +17,6 @@ export default async function getNotificationByAccountId(context) {
   const { Notifications } = collections;
   let accountId = context.userId;
   console.log("accountId", accountId);
-  let notifications = await Notifications.find({ to: accountId }).toArray();
+  let notifications = await Notifications.find({ to: accountId }).sort({"timeSent":-1}).toArray();
   return notifications;
 }
