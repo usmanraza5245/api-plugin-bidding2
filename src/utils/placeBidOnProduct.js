@@ -94,7 +94,7 @@ export default async function placeBidOnProduct(context, args) {
       details: null,
       from: accountId,
       hasDetails: false,
-      message: `Placed a bid of ${offer.displayAmount.amount} on ${product.product.title}`,
+      message: `Placed a bid of ${offer.amount.displayAmount} on ${product.product.title}`,
       status: "unread",
       to: soldby,
       type: "bid",
