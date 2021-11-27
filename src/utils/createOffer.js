@@ -166,7 +166,7 @@ export default async function createOffer(context, args) {
       loserId = accountId;
     }
 
-    if (winnerId == accountId) {
+    if (winnerId == bidExist.createdBy) {
       const date = new Date();
       date.setDate(date.getDate() + 1);
       let valid_till = date;
