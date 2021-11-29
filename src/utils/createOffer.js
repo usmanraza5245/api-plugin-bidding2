@@ -16,19 +16,24 @@ import createNotification from "./createNotification.js";
  * @param {Boolean} args.shouldIncludeArchived - Include archived units in results
  * @returns {Promise<Object[]>} Array of Unit Variant objects.
  */
-function isSeller(context,bid_CreatedBy){
-const {userId}=context;
-if(userId==bid_CreatedBy){
-  return false
-}else {return true}
+function isSeller(context, bid_CreatedBy) {
+  const { userId } = context;
+  if (userId == bid_CreatedBy) {
+    return false;
+  } else {
+    return true;
+  }
 }
 export default async function createOffer(context, args) {
   const { collections, pubSub } = context;
   const { Bids, Cart } = collections;
   const { bidId, offer, to, type } = args;
   let accountId = context.userId;
-  let coinResponse = null;  let headUser= null;
+  let coinResponse = null;
+  let headUser = null;
   let tailUser = null;
+  let winnerOffer,
+    loserOffer = null;
   let winnerId,
     loserId = null;
   if (!bidId || bidId.length == 0) {
@@ -39,7 +44,9 @@ export default async function createOffer(context, args) {
   if (!bidExist) {
     throw new Error("invalid bid ID");
   }
-  let product =await getProductbyId(context,{productId:bidExist.productId});
+  let product = await getProductbyId(context, {
+    productId: bidExist.productId,
+  });
 
   let offerObj = {
     ...offer,
@@ -55,11 +62,19 @@ export default async function createOffer(context, args) {
       { _id: bidId },
       {
         $addToSet: {
-          offers: offerObj
-           },
+          offers: offerObj,
+        },
         $set: {
-          sellerOffer:isSeller(context,bidExist.createdBy)?offerObj:bidExist.sellerOffer?bidExist.sellerOffer:null,
-          buyerOffer:!isSeller(context,bidExist.createdBy)?offerObj:bidExist.buyerOffer?bidExist.buyerOffer:null,
+          sellerOffer: isSeller(context, bidExist.createdBy)
+            ? offerObj
+            : bidExist.sellerOffer
+            ? bidExist.sellerOffer
+            : null,
+          buyerOffer: !isSeller(context, bidExist.createdBy)
+            ? offerObj
+            : bidExist.buyerOffer
+            ? bidExist.buyerOffer
+            : null,
           activeOffer: offerObj,
           status: "inProgress",
           canAccept: to,
@@ -67,8 +82,15 @@ export default async function createOffer(context, args) {
       }
     );
 
-    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Placed a new offer of ${offer.amount.amount} on ${product.product.title}`, status:"unread", to:to, type:"offer"})
-
+    createNotification(context, {
+      details: null,
+      from: accountId,
+      hasDetails: false,
+      message: `Placed a new offer of ${offer.amount.amount} on ${product.product.title}`,
+      status: "unread",
+      to: to,
+      type: "offer",
+    });
   } else if (type == "acceptedOffer") {
     const date = new Date();
     date.setDate(date.getDate() + 1);
@@ -94,7 +116,15 @@ export default async function createOffer(context, args) {
         );
       }
     }
-    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Accepted your offer of ${bidExist.activeOffer.amount.amount} on ${product.product.title}`, status:"unread", to:to, type:"offer"})
+    createNotification(context, {
+      details: null,
+      from: accountId,
+      hasDetails: false,
+      message: `Accepted your offer of ${bidExist.activeOffer.amount.amount} on ${product.product.title}`,
+      status: "unread",
+      to: to,
+      type: "offer",
+    });
 
     bid_update = await Bids.updateOne(
       { _id: bidId },
@@ -106,7 +136,7 @@ export default async function createOffer(context, args) {
           acceptedOffer: { ...bidExist.activeOffer, validTill: valid_till },
           acceptedBy: accountId,
           canAccept: null,
-          acceptAction:"user_action",
+          acceptAction: "user_action",
           status: "closed",
         },
       }
@@ -124,7 +154,15 @@ export default async function createOffer(context, args) {
       }
     );
   } else if (type == "gameRequest") {
-    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Sent you a game request on ${product.product.title}`, status:"unread", to:to, type:"offer"})
+    createNotification(context, {
+      details: null,
+      from: accountId,
+      hasDetails: false,
+      message: `Sent you a game request on ${product.product.title}`,
+      status: "unread",
+      to: to,
+      type: "offer",
+    });
 
     bid_update = await Bids.updateOne(
       { _id: bidId },
@@ -140,7 +178,15 @@ export default async function createOffer(context, args) {
       }
     );
   } else if (type == "rejectedGame") {
-    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Rejected your game request on ${product.product.title}`, status:"unread", to:to, type:"offer"})
+    createNotification(context, {
+      details: null,
+      from: accountId,
+      hasDetails: false,
+      message: `Rejected your game request on ${product.product.title}`,
+      status: "unread",
+      to: to,
+      type: "offer",
+    });
 
     bid_update = await Bids.updateOne(
       { _id: bidId },
@@ -155,13 +201,21 @@ export default async function createOffer(context, args) {
       }
     );
   } else if (type == "acceptedGame") {
-    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Accepted your game request on ${product.product.title}`, status:"unread", to:to, type:"offer"})
-    if(offerObj.text.toLowerCase() == "head"){
-      headUser=accountId;
-      tailUser=to;
-    }else{
-      headUser=to;
-      tailUser=accountId;
+    createNotification(context, {
+      details: null,
+      from: accountId,
+      hasDetails: false,
+      message: `Accepted your game request on ${product.product.title}`,
+      status: "unread",
+      to: to,
+      type: "offer",
+    });
+    if (offerObj.text.toLowerCase() == "head") {
+      headUser = accountId;
+      tailUser = to;
+    } else {
+      headUser = to;
+      tailUser = accountId;
     }
     coinResponse = await coinToss(context);
     console.log("coin response", coinResponse, offerObj.text);
@@ -175,12 +229,14 @@ export default async function createOffer(context, args) {
     }
 
     if (winnerId == bidExist.createdBy) {
+      winnerOffer = bidExist.buyerOffer ? bidExist.buyerOffer : null;
+      loserOffer = bidExist.sellerOffer ? bidExist.sellerOffer : null;
       const date = new Date();
       date.setDate(date.getDate() + 1);
       let valid_till = date;
-      console.log("cartExist on ",bidExist.createdBy)
+      console.log("cartExist on ", bidExist.createdBy);
       let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
-      console.log("cartExist",cartExist)
+      console.log("cartExist", cartExist);
       if (cartExist && cartExist.items[0]) {
         console.log(
           "accept offer to check cart",
@@ -190,7 +246,7 @@ export default async function createOffer(context, args) {
         );
 
         let productExist = cartExist.items[0].variantId == bidExist.variantId;
-        console.log("product Exist",productExist);
+        console.log("product Exist", productExist);
         if (productExist) {
           let cart_update = await Cart.updateOne(
             { _id: cartExist._id },
@@ -201,7 +257,7 @@ export default async function createOffer(context, args) {
               },
             }
           );
-          console.log("cart updated",cart_update)
+          console.log("cart updated", cart_update);
         }
       }
       bid_update = await Bids.updateOne(
@@ -219,7 +275,7 @@ export default async function createOffer(context, args) {
             lostBy: loserId,
             acceptedOffer: { ...bidExist.buyerOffer, validTill: valid_till },
             acceptedBy: accountId,
-            acceptAction:"game",
+            acceptAction: "game",
             canAccept: null,
             status: "closed",
           },
@@ -227,6 +283,9 @@ export default async function createOffer(context, args) {
       );
     } else {
       // game lost
+
+      loserOffer = bidExist.buyerOffer ? bidExist.buyerOffer : null;
+      winnerOffer = bidExist.sellerOffer ? bidExist.sellerOffer : null;
       bid_update = await Bids.updateOne(
         { _id: bidId },
         {
@@ -238,7 +297,9 @@ export default async function createOffer(context, args) {
             acceptedGame: offerObj,
             gameAcceptedBy: accountId,
             status: "closed",
-            acceptedOffer: bidExist.buyerOffer?{ ...bidExist.buyerOffer, validTill: valid_till }:null,
+            acceptedOffer: bidExist.buyerOffer
+              ? { ...bidExist.buyerOffer, validTill: valid_till }
+              : null,
             wonBy: winnerId,
             lostBy: loserId,
             gameAcceptedAt: new Date(),
@@ -247,7 +308,15 @@ export default async function createOffer(context, args) {
       );
     }
   } else {
-    createNotification(context,{details:null,from:accountId, hasDetails:false, message:`Sent you a new message ${product.product.title}`, status:"unread", to:to, type:"offer"})
+    createNotification(context, {
+      details: null,
+      from: accountId,
+      hasDetails: false,
+      message: `Sent you a new message ${product.product.title}`,
+      status: "unread",
+      to: to,
+      type: "offer",
+    });
 
     bid_update = await Bids.updateOne(
       { _id: bidId },
@@ -271,7 +340,10 @@ export default async function createOffer(context, args) {
           lostBy: loserId,
           data: "String",
           head: headUser,
-          tail:tailUser
+          tail: tailUser,
+          bidId: bidId,
+          winnerOffer: winnerOffer,
+          loserOffer: loserOffer,
         },
       });
     }
