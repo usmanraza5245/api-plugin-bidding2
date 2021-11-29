@@ -9,6 +9,8 @@ type Bid implements Node {
   status: String
   offerBy: ID
   activeOffer: Offer
+  sellerOffer:Offer
+  buyerOffer:Offer
   canAccept: ID
   offers: [Offer]
   gameCanAccept: ID
