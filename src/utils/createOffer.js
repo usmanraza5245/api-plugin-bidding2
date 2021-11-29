@@ -96,14 +96,15 @@ export default async function createOffer(context, args) {
     date.setDate(date.getDate() + 1);
     let valid_till = date;
     let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
+    cartExist
     if (cartExist && cartExist.items[0]) {
       console.log(
         "accept offer to check cart",
         cartExist.items[0]._id,
         bidExist.productId,
-        cartExist.items[0]._id == bidExist.productId
+        cartExist.items[0].variantId == bidExist.variantId
       );
-      let productExist = cartExist.items[0]._id == bidExist.productId;
+      let productExist = cartExist.items[0].variantId == bidExist.variantId;
       if (productExist) {
         let cart_update = await Cart.updateOne(
           { _id: cartExist._id },
