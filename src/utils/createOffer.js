@@ -90,6 +90,8 @@ export default async function createOffer(context, args) {
       status: "unread",
       to: to,
       type: "offer",
+      url:`/chat?bidId=${bidExist._id}&productId=${bidExist.productId}&varintId=${bidExist.variantId}`
+      
     });
   } else if (type == "acceptedOffer") {
     const date = new Date();
@@ -125,6 +127,8 @@ export default async function createOffer(context, args) {
       status: "unread",
       to: to,
       type: "offer",
+      url:`/chat?bidId=${bidExist._id}&productId=${bidExist.productId}&varintId=${bidExist.variantId}`
+
     });
 
     bid_update = await Bids.updateOne(
@@ -163,6 +167,8 @@ export default async function createOffer(context, args) {
       status: "unread",
       to: to,
       type: "offer",
+      url:`/chat?bidId=${bidExist._id}&productId=${bidExist.productId}&varintId=${bidExist.variantId}`
+
     });
 
     bid_update = await Bids.updateOne(
@@ -187,6 +193,8 @@ export default async function createOffer(context, args) {
       status: "unread",
       to: to,
       type: "offer",
+      url:`/chat?bidId=${bidExist._id}&productId=${bidExist.productId}&varintId=${bidExist.variantId}`
+
     });
 
     bid_update = await Bids.updateOne(
@@ -210,6 +218,8 @@ export default async function createOffer(context, args) {
       status: "unread",
       to: to,
       type: "offer",
+      url:`/chat?bidId=${bidExist._id}&productId=${bidExist.productId}&varintId=${bidExist.variantId}`
+
     });
     if (offerObj.text.toLowerCase() == "head") {
       headUser = accountId;
@@ -317,6 +327,8 @@ export default async function createOffer(context, args) {
       status: "unread",
       to: to,
       type: "offer",
+      url:`/chat?bidId=${bidExist._id}&productId=${bidExist.productId}&varintId=${bidExist.variantId}`
+
     });
 
     bid_update = await Bids.updateOne(

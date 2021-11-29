@@ -15,7 +15,7 @@ import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 export default async function createNotification(context, args) {
   const { collections, pubSub } = context;
   const { Notifications } = collections;
-  const { details, hasDetails, message, status, to, type } = args;
+  const { details, hasDetails, message, status, to, type,url } = args;
   let accountId = context.userId;
   let new_id = await generateUID();
 
@@ -30,7 +30,7 @@ export default async function createNotification(context, args) {
     from :accountId,
     timeSent:new Date(),
     _id: new_id,
-    url: "/this/is/url",
+    url: url?url:"/this/is/url",
   };
   let NotificationsAdded = await Notifications.insertOne(insert_obj);
   console.log("NotificationsAdded.insertedId",NotificationsAdded.insertedId);
