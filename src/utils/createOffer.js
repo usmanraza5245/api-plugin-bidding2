@@ -32,6 +32,7 @@ export default async function createOffer(context, args) {
   let coinResponse = null;
   let headUser = null;
   let tailUser = null;
+  let valid_till =null;
   let winnerOffer,
     loserOffer = null;
   let winnerId,
@@ -96,7 +97,7 @@ export default async function createOffer(context, args) {
   } else if (type == "acceptedOffer") {
     const date = new Date();
     date.setDate(date.getDate() + 1);
-    let valid_till = date;
+    valid_till = date;
     let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
     cartExist
     if (cartExist && cartExist.items[0]) {
@@ -244,7 +245,7 @@ export default async function createOffer(context, args) {
       loserOffer = bidExist.sellerOffer ? bidExist.sellerOffer : null;
       const date = new Date();
       date.setDate(date.getDate() + 1);
-      let valid_till = date;
+       valid_till = date;
       console.log("cartExist on ", bidExist.createdBy);
       let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
       console.log("cartExist", cartExist);
