@@ -178,15 +178,19 @@ export default async function createOffer(context, args) {
       const date = new Date();
       date.setDate(date.getDate() + 1);
       let valid_till = date;
+      console.log("cartExist on ",bidExist.createdBy)
       let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
+      console.log("cartExist",cartExist)
       if (cartExist && cartExist.items[0]) {
         console.log(
           "accept offer to check cart",
-          cartExist.items[0]._id,
-          bidExist.productId,
-          cartExist.items[0]._id == bidExist.productId
+          cartExist.items[0].variantId,
+          bidExist.variantId,
+          cartExist.items[0].variantId == bidExist.variantId
         );
-        let productExist = cartExist.items[0]._id == bidExist.productId;
+
+        let productExist = cartExist.items[0].variantId == bidExist.variantId;
+        console.log("product Exist",productExist);
         if (productExist) {
           let cart_update = await Cart.updateOne(
             { _id: cartExist._id },
@@ -197,6 +201,7 @@ export default async function createOffer(context, args) {
               },
             }
           );
+          console.log("cart updated",cart_update)
         }
       }
       bid_update = await Bids.updateOne(
