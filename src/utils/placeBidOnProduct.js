@@ -40,27 +40,29 @@ export default async function placeBidOnProduct(context, args) {
     $and: [{ createdBy: accountId }, { soldBy: soldby }],
   });
   let product = await getProductbyId(context, { productId: decodeProductId });
-
+  let offer_obj = {
+    ...offer,
+    createdBy: accountId,
+    _id: await generateUID(),
+    createdFor: soldby,
+    createdAt: new Date(),
+    type: offerType,
+  };
   let insert_obj = {
     _id: new_id,
-    productSlug:product&&product.product?product.product.slug:null,
+    productSlug: product && product.product ? product.product.slug : null,
     productId: decodeProductId,
     variantId: decodeVariantId,
-    reactionVariantId:variantId,
+    reactionVariantId: variantId,
+    reactionPoductId: productId,
     shopId: decodeShopId,
     createdBy: accountId,
     createdAt: new Date(),
     updatedAt: new Date(),
     offerBy: accountId,
     canAccept: soldby,
-    activeOffer: {
-      ...offer,
-      createdBy: accountId,
-      _id: await generateUID(),
-      createdFor: soldby,
-      createdAt: new Date(),
-      type: offerType,
-    },
+    activeOffer: offer_obj,
+    buyerOffer: offer_obj,
     status: "new",
     soldBy: soldby,
     offers: [

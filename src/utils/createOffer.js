@@ -16,6 +16,12 @@ import createNotification from "./createNotification.js";
  * @param {Boolean} args.shouldIncludeArchived - Include archived units in results
  * @returns {Promise<Object[]>} Array of Unit Variant objects.
  */
+function isSeller(context,bid_CreatedBy){
+const {userId}=context;
+if(userId==bid_CreatedBy){
+  return false
+}else {return true}
+}
 export default async function createOffer(context, args) {
   const { collections, pubSub } = context;
   const { Bids, Cart } = collections;
@@ -49,9 +55,11 @@ export default async function createOffer(context, args) {
       { _id: bidId },
       {
         $addToSet: {
-          offers: offerObj,
-        },
+          offers: offerObj
+           },
         $set: {
+          sellerOffer:isSeller(context,bidExist.createdBy)?offerObj:bidExist.sellerOffer?bidExist.sellerOffer:null,
+          buyerOffer:!isSeller(context,bidExist.createdBy)?offerObj:bidExist.buyerOffer?bidExist.buyerOffer:null,
           activeOffer: offerObj,
           status: "inProgress",
           canAccept: to,
@@ -204,7 +212,7 @@ export default async function createOffer(context, args) {
             gameAcceptedAt: new Date(),
             wonBy: winnerId,
             lostBy: loserId,
-            acceptedOffer: { ...bidExist.activeOffer, validTill: valid_till },
+            acceptedOffer: { ...bidExist.buyerOffer, validTill: valid_till },
             acceptedBy: accountId,
             acceptAction:"game",
             canAccept: null,
@@ -225,6 +233,7 @@ export default async function createOffer(context, args) {
             acceptedGame: offerObj,
             gameAcceptedBy: accountId,
             status: "closed",
+            acceptedOffer: bidExist.buyerOffer?{ ...bidExist.buyerOffer, validTill: valid_till }:null,
             wonBy: winnerId,
             lostBy: loserId,
             gameAcceptedAt: new Date(),
