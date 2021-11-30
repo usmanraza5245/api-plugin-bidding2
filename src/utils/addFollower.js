@@ -20,9 +20,17 @@ export default async function addFollower(context, args) {
   const { userName } = args;
   const accountId = context.userId;
   const userExist = await getAccountByuserName(context, userName);
-  let user_update=null;
+  let follow_update,following_update=null;
   if (userExist) {
-    user_update = await Accounts.updateOne(
+    follow_update = await Accounts.updateOne(
+      { _id: userExist.userId },
+      {
+        $addToSet: {
+          follower: accountId,
+        },
+      }
+    );
+    following_update = await Accounts.updateOne(
       { _id: accountId },
       {
         $addToSet: {
@@ -30,7 +38,7 @@ export default async function addFollower(context, args) {
         },
       }
     );
-    if (user_update.modifiedCount) {
+    if (following_update.modifiedCount) {
       // started folowing you
       const senderAccount = await getAccountById(context, accountId);
 
