@@ -3,6 +3,7 @@ type Bid implements Node {
   productId: ID!
   productSlug:String!
   reactionVariantId:ID!
+  reactionProductId:ID!
   product: ProductVariant
   updatedAt: DateTime
   createdAt: DateTime
