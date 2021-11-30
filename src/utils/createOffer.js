@@ -32,7 +32,7 @@ export default async function createOffer(context, args) {
   let coinResponse = null;
   let headUser = null;
   let tailUser = null;
-  let valid_till =null;
+  let valid_till = null;
   let winnerOffer,
     loserOffer = null;
   let winnerId,
@@ -91,15 +91,14 @@ export default async function createOffer(context, args) {
       status: "unread",
       to: to,
       type: "offer",
-      url:`/chat?bidId=${bidExist._id}&productId=${bidExist.productId}&varintId=${bidExist.variantId}`
-      
+      url: `/en/chat?bidId=${bidExist._id}`,
     });
   } else if (type == "acceptedOffer") {
     const date = new Date();
     date.setDate(date.getDate() + 1);
     valid_till = date;
     let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
-    cartExist
+    cartExist;
     if (cartExist && cartExist.items[0]) {
       console.log(
         "accept offer to check cart",
@@ -128,8 +127,7 @@ export default async function createOffer(context, args) {
       status: "unread",
       to: to,
       type: "offer",
-      url:`/chat?bidId=${bidExist._id}&productId=${bidExist.productId}&varintId=${bidExist.variantId}`
-
+      url: `/en/chat?bidId=${bidExist._id}`,
     });
 
     bid_update = await Bids.updateOne(
@@ -168,8 +166,7 @@ export default async function createOffer(context, args) {
       status: "unread",
       to: to,
       type: "offer",
-      url:`/chat?bidId=${bidExist._id}&productId=${bidExist.productId}&varintId=${bidExist.variantId}`
-
+      url: `/en/chat?bidId=${bidExist._id}`,
     });
 
     bid_update = await Bids.updateOne(
@@ -194,8 +191,7 @@ export default async function createOffer(context, args) {
       status: "unread",
       to: to,
       type: "offer",
-      url:`/chat?bidId=${bidExist._id}&productId=${bidExist.productId}&varintId=${bidExist.variantId}`
-
+      url: `/en/chat?bidId=${bidExist._id}`,
     });
 
     bid_update = await Bids.updateOne(
@@ -219,8 +215,7 @@ export default async function createOffer(context, args) {
       status: "unread",
       to: to,
       type: "offer",
-      url:`/chat?bidId=${bidExist._id}&productId=${bidExist.productId}&varintId=${bidExist.variantId}`
-
+      url: `/en/chat?bidId=${bidExist._id}`,
     });
     if (offerObj.text.toLowerCase() == "head") {
       headUser = accountId;
@@ -245,7 +240,7 @@ export default async function createOffer(context, args) {
       loserOffer = bidExist.sellerOffer ? bidExist.sellerOffer : null;
       const date = new Date();
       date.setDate(date.getDate() + 1);
-       valid_till = date;
+      valid_till = date;
       console.log("cartExist on ", bidExist.createdBy);
       let cartExist = await Cart.findOne({ accountId: bidExist.createdBy });
       console.log("cartExist", cartExist);
@@ -309,8 +304,8 @@ export default async function createOffer(context, args) {
             acceptedGame: offerObj,
             gameAcceptedBy: accountId,
             status: "closed",
-            acceptedOffer: bidExist.buyerOffer
-              ? { ...bidExist.buyerOffer, validTill: valid_till }
+            acceptedOffer: bidExist.sellerOffer
+              ? { ...bidExist.sellerOffer, validTill: valid_till }
               : null,
             wonBy: winnerId,
             lostBy: loserId,
@@ -328,8 +323,7 @@ export default async function createOffer(context, args) {
       status: "unread",
       to: to,
       type: "offer",
-      url:`/chat?bidId=${bidExist._id}&productId=${bidExist.productId}&varintId=${bidExist.variantId}`
-
+      url: `/en/chat?bidId=${bidExist._id}`,
     });
 
     bid_update = await Bids.updateOne(

@@ -18,7 +18,15 @@ import getAccountById from "./getAccountById.js";
 export default async function placeBidOnProduct(context, args) {
   const { collections, pubSub } = context;
   const { Bids } = collections;
-  const { shopId, productId, offer, variantId, soldby, offerType } = args;
+  const {
+    shopId,
+    productId,
+    offer,
+    variantId,
+    soldby,
+    offerType,
+    productPrice,
+  } = args;
   let accountId = context.userId;
   let decodeProductId = decodeOpaqueId(productId).id;
   let decodeVariantId = decodeOpaqueId(variantId).id;
@@ -48,6 +56,16 @@ export default async function placeBidOnProduct(context, args) {
     createdAt: new Date(),
     type: offerType,
   };
+  let offer_seller = {
+    amount: productPrice,
+    text: "Original price",
+    status: "new",
+    createdBy: offer.createdFor,
+    _id: await generateUID(),
+    createdFor: offer.createdBy,
+    createdAt: new Date(),
+    type: "counterOffer",
+  };
   let insert_obj = {
     _id: new_id,
     productSlug: product && product.product ? product.product.slug : null,
@@ -63,6 +81,7 @@ export default async function placeBidOnProduct(context, args) {
     canAccept: soldby,
     activeOffer: offer_obj,
     buyerOffer: offer_obj,
+    sellerOffer: offer_seller,
     status: "new",
     soldBy: soldby,
     offers: [
@@ -100,7 +119,7 @@ export default async function placeBidOnProduct(context, args) {
       status: "unread",
       to: soldby,
       type: "bid",
-      url:`/chat?bidId=${BidsAdded.insertedId}&productId=${decodeProductId}&varintId=${decodeVariantId}`
+      url: `/chat?bidId=${BidsAdded.insertedId}&productId=${decodeProductId}&varintId=${decodeVariantId}`,
     });
     return BidsAdded.insertedId;
     // return Bids.findOne({"_id":BidsAdded.insertedId});

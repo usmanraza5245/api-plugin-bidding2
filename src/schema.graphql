@@ -147,6 +147,7 @@ input placeBidInput {
   soldby: ID!
   offer: offerInput!
   offerType: offerTypes!
+  productPrice:MoneyInput!
 }
 input offerInput {
   amount: MoneyInput!
