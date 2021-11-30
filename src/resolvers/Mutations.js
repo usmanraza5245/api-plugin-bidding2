@@ -3,7 +3,9 @@ import createOffer from "../utils/createOffer.js";
 import addOfferPriceToCart from "../utils/addOfferPriceToCart.js";
 import createNotification from "../utils/createNotification.js";
 import markAsRead from "../utils/markAsRead.js";
+import addFollower from "../utils/addFollower.js";
 export default {
+  // Offer mutation Start
   async placeBidOnProduct(parent, args, context, info) {
     let accountId = context.userId;
     if (!accountId || accountId == null) {
@@ -42,5 +44,14 @@ export default {
     console.log("markAsRead", args);
     let mkr = await markAsRead(context, args);
     return mkr;
+  },
+  // Offer Mutation End
+  async followUser(parent, args, context, info) {
+    console.log("follow user mutation");
+    const follow_response=await addFollower(context,args);
+    return follow_response;
+  },
+  async unfollowUser(parent, args, context, info) {
+    console.log("unfollow user mutation");
   },
 };

@@ -170,3 +170,9 @@ enum offerTypes {
   acceptedGame
   rejectedGame
 }
+
+
+extend type Mutation {
+  followUser(userName:String!):Boolean
+  unfollowUser(userName:String!):Boolean
+}
