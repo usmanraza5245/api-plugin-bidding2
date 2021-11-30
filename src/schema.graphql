@@ -1,16 +1,16 @@
 type Bid implements Node {
   _id: ID!
   productId: ID!
-  productSlug:String!
-  reactionVariantId:ID!
+  productSlug: String!
+  reactionVariantId: ID!
   product: ProductVariant
   updatedAt: DateTime
   createdAt: DateTime
   status: String
   offerBy: ID
   activeOffer: Offer
-  sellerOffer:Offer
-  buyerOffer:Offer
+  sellerOffer: Offer
+  buyerOffer: Offer
   canAccept: ID
   offers: [Offer]
   gameCanAccept: ID
@@ -55,8 +55,8 @@ type Notification {
   status: notificationStatus
   timeSent: DateTime
   to: ID!
-  from:ID
-  sender:createdByUserinfo
+  from: ID
+  sender: createdByUserinfo
   type: notificationTypes
   url: String
 }
@@ -84,21 +84,21 @@ extend type Subscription {
   offer(userId: ID!): offerSubscriptionPayload
   newBid(userId: ID!): Bid
   startCoinToss(bidId: ID!): coinTossSubscriptionPayload
-  notifications(userId:ID!):Notification
+  notifications(userId: ID!): Notification
 }
 
 type coinTossSubscriptionPayload {
   result: String
   wonBy: ID
-  wonByInfo:createdByUserinfo
-  lostByInfo:createdByUserinfo
+  wonByInfo: createdByUserinfo
+  lostByInfo: createdByUserinfo
   lostBy: ID
   data: String
-  head:ID
-  tail:ID
-  bidId:ID
-  winnerOffer:Offer
-  loserOffer:Offer
+  head: ID
+  tail: ID
+  bidId: ID
+  winnerOffer: Offer
+  loserOffer: Offer
 }
 type offerSubscriptionPayload {
   offer: Offer!
@@ -114,8 +114,8 @@ extend type Mutation {
   placeBidOnProduct(input: placeBidInput): placeBidPayLoad
   sendOffer(input: sendOfferInput): Offer
   updateCartOfferPrice(cartId: ID!, bidId: ID!): Cart
-  createNotification(input:createNotificationInput):Notification
-  markAsRead(notificationId:ID):Notification
+  createNotification(input: createNotificationInput): Notification
+  markAsRead(notificationId: ID): Notification
 }
 
 enum coinTossOptions {
@@ -147,7 +147,7 @@ input placeBidInput {
   soldby: ID!
   offer: offerInput!
   offerType: offerTypes!
-  productPrice:MoneyInput!
+  productPrice: MoneyInput!
 }
 input offerInput {
   amount: MoneyInput!
@@ -171,14 +171,37 @@ enum offerTypes {
   rejectedGame
 }
 
-
 extend type Mutation {
-  followUser(userName:String!):followResponsePayload
-  unfollowUser(userName:String!):String
+  followUser(userName: String!): followUserInfo
+  unfollowUser(userName: String!): String
 }
-type followResponsePayload {
-  image:String
-  name:String!
-  userName:String!
+extend type Query {
+  getUserByuserName(userName: String!): userProfile
 }
-
+type followUserInfo {
+  image: String
+  name: String
+  userName: String
+}
+type profile {
+  name: String
+  picture: String
+  username: String
+  firstName: String
+  lastName: String
+}
+type profileObj {
+  name: String
+  profile: profile
+  username: String
+}
+type userProfile {
+  name: String
+  userName: String
+  profilePhoto: String
+  products: [CatalogProductVariant]
+  follower: [profileObj]
+  following: [profileObj]
+  isVerified: Boolean
+  canFollow: Boolean
+}
