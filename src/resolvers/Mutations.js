@@ -4,6 +4,8 @@ import addOfferPriceToCart from "../utils/addOfferPriceToCart.js";
 import createNotification from "../utils/createNotification.js";
 import markAsRead from "../utils/markAsRead.js";
 import addFollower from "../utils/addFollower.js";
+import removeFollower from "../utils/removeFollower.js";
+
 export default {
   // Offer mutation Start
   async placeBidOnProduct(parent, args, context, info) {
@@ -52,6 +54,9 @@ export default {
     return follow_response;
   },
   async unfollowUser(parent, args, context, info) {
+    const unfollow_response = await removeFollower(context,args)
+    return unfollow_response;
+
     console.log("unfollow user mutation");
   },
 };
