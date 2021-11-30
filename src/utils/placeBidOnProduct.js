@@ -72,7 +72,7 @@ export default async function placeBidOnProduct(context, args) {
     productId: decodeProductId,
     variantId: decodeVariantId,
     reactionVariantId: variantId,
-    reactionPoductId: productId,
+    reactionProductId: productId,
     shopId: decodeShopId,
     createdBy: accountId,
     createdAt: new Date(),
