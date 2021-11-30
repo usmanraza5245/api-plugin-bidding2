@@ -40,7 +40,7 @@ export default async function removeFollower(context, args) {
     );
     if (following_update.modifiedCount) {
     
-      return true;
+      return userName;
     } else {
       return false;
     }

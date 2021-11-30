@@ -20,7 +20,8 @@ export default async function addFollower(context, args) {
   const { userName } = args;
   const accountId = context.userId;
   const userExist = await getAccountByuserName(context, userName);
-  let follow_update,following_update=null;
+  let follow_update,
+    following_update = null;
   if (userExist) {
     follow_update = await Accounts.updateOne(
       { _id: userExist.userId },
@@ -41,7 +42,7 @@ export default async function addFollower(context, args) {
     if (following_update.modifiedCount) {
       // started folowing you
       const senderAccount = await getAccountById(context, accountId);
-
+      console.log("senderAccount",senderAccount);
       createNotification(context, {
         details: null,
         from: accountId,
@@ -52,7 +53,23 @@ export default async function addFollower(context, args) {
         type: "follow",
         url: `/en/userName/`,
       });
-      return true;
+      return {
+        name: senderAccount.name
+          ? senderAccount.name
+          : senderAccount.profile.name
+          ? senderAccount.profile.name
+          : senderAccount.username
+          ? senderAccount.username
+          : senderAccount.profile.username
+          ? senderAccount.profile.username
+          : "Anonymous",
+        image: senderAccount.profile.picture,
+        userName: senderAccount.username
+          ? senderAccount.username
+          : senderAccount.profile.username
+          ? senderAccount.profile.username
+          : null,
+      };
     } else {
       return false;
     }

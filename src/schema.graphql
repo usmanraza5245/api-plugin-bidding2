@@ -173,6 +173,12 @@ enum offerTypes {
 
 
 extend type Mutation {
-  followUser(userName:String!):Boolean
-  unfollowUser(userName:String!):Boolean
+  followUser(userName:String!):followResponsePayload
+  unfollowUser(userName:String!):String
 }
+type followResponsePayload {
+  image:String
+  name:String!
+  userName:String!
+}
+

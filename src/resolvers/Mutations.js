@@ -67,6 +67,5 @@ export default {
     const unfollow_response = await removeFollower(context,args)
     return unfollow_response;
 
-    console.log("unfollow user mutation");
   },
 };
