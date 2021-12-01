@@ -23,9 +23,7 @@ export default {
     let products = await getProductsbyuserId(context, parent);
     return products;
   },
-  async ancestorId(parent, args, context, info) {
-    return parent.ancestors[0];
-  },
+
   async parentId(parent, args, context, info) {
     return encodeOpaqueId("reaction/product", parent.ancestors[0]);
     //encode( encodeOpaqueId(parent.ancestors[0]))
