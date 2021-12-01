@@ -177,6 +177,7 @@ extend type Mutation {
 }
 extend type Query {
   getUserByuserName(userName: String!): userProfile
+  isAvailable(userName:String!):Boolean
 }
 type followUserInfo {
   image: String

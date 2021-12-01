@@ -4,8 +4,14 @@ import getBidsbySellerId from "../utils/getBidsbySellerId.js";
 import getActiveBids from "../utils/getActiveBids.js";
 import getNotificationByAccountId from "../utils/getNotificationByAccountId.js";
 import getAccountByuserName from "../utils/getAccountByuserName.js";
-
+import isAvailable from "../utils/isAvailable.js"
 export default {
+  async isAvailable(parent,args,context,info){
+    console.log("is available ");
+    let response=await isAvailable(context,args);
+    return response;
+
+  },
   async getBidsbyAccountId(parent, args, context, info) {
     let accountId = context.userId;
     if (!accountId || accountId == null) {
