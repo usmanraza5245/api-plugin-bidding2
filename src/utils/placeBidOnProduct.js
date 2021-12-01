@@ -119,7 +119,7 @@ export default async function placeBidOnProduct(context, args) {
       status: "unread",
       to: soldby,
       type: "bid",
-      url: `/en/chat?bidId=${BidsAdded.insertedId}&productId=${decodeProductId}&varintId=${decodeVariantId}`,
+      url: `/en/chat?bidId=${BidsAdded.insertedId}`,
     });
     return BidsAdded.insertedId;
     // return Bids.findOne({"_id":BidsAdded.insertedId});
