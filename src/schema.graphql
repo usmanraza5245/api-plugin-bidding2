@@ -173,7 +173,7 @@ enum offerTypes {
 }
 
 extend type Mutation {
-  followUser(userName: String!): followUserInfo
+  followUser(userName: String!): profileObj
   unfollowUser(userName: String!): String
 }
 extend type Query {
@@ -201,7 +201,7 @@ type userProfile {
   name: String
   userName: String
   profilePhoto: String
-  products: [CatalogProductVariant]
+  products: [ProductVariant]
   follower: [profileObj]
   following: [profileObj]
   isVerified: Boolean

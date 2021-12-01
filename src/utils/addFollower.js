@@ -54,6 +54,21 @@ export default async function addFollower(context, args) {
         url: `/en/userName/`,
       });
       return {
+        profile: {
+          name: senderAccount.name
+          ? senderAccount.name
+          : senderAccount.profile.name
+          ? senderAccount.profile.name
+          : senderAccount.username
+          ? senderAccount.username
+          : senderAccount.profile.username
+          ? senderAccount.profile.username
+          : "LoS",
+          picture: senderAccount.profile.picture,
+          username:  userName,
+          
+        },
+        username: userName,
         name: senderAccount.name
           ? senderAccount.name
           : senderAccount.profile.name
@@ -63,12 +78,7 @@ export default async function addFollower(context, args) {
           : senderAccount.profile.username
           ? senderAccount.profile.username
           : "LoS",
-        image: senderAccount.profile.picture,
-        userName: senderAccount.username
-          ? senderAccount.username
-          : senderAccount.profile.username
-          ? senderAccount.profile.username
-          : null,
+       
       };
     } else {
       return false;
