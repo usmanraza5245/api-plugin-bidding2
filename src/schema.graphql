@@ -172,7 +172,7 @@ enum offerTypes {
 }
 
 extend type Mutation {
-  followUser(userName: String!): followUserInfo
+  followUser(userName: String!): profileObj
   unfollowUser(userName: String!): String
 }
 extend type Query {
