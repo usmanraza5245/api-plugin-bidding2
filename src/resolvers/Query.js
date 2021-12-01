@@ -83,7 +83,7 @@ export default {
   },
   async getUserByuserName(parent, args, context, info) {
     let account = await getAccountByuserName(context, args.userName);
-    console.log(account)
+    console.log("account",account);
     return {
       userId:account.userId,
       userName: args.userName,     
@@ -95,7 +95,7 @@ export default {
       profilePhoto: account.profile.picture,
       followerData:account.follower,
       followingData:account.following,
-      canFollow:account.following&&account.following.indexOf(context.userId)==-1?true:false,
+      canFollow:(account.following&&account.following.indexOf(context.userId)==-1)||account.following==undefined?true:false,
       isVerified:account.profile.identityVerified?true:false
     };
   },
