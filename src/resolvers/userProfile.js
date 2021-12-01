@@ -24,8 +24,4 @@ export default {
     return products;
   },
 
-  async parentId(parent, args, context, info) {
-    return encodeOpaqueId("reaction/product", parent.ancestors[0]);
-    //encode( encodeOpaqueId(parent.ancestors[0]))
-  },
 };
