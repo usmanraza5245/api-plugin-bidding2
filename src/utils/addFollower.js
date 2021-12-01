@@ -65,10 +65,10 @@ export default async function addFollower(context, args) {
           ? senderAccount.profile.username
           : "LoS",
           picture: senderAccount.profile.picture,
-          username:  userName,
+          username: senderAccount.profile.username,
           
         },
-        username: userName,
+        username: senderAccount.profile.username,
         name: senderAccount.name
           ? senderAccount.name
           : senderAccount.profile.name
