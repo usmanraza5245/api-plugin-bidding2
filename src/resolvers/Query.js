@@ -95,7 +95,7 @@ export default {
       profilePhoto: account.profile.picture,
       followerData:account.follower,
       followingData:account.following,
-      canFollow:(account.following&&account.following.indexOf(context.userId)==-1)||account.following==undefined?true:false,
+      canFollow:(account.follower&&account.follower.indexOf(context.userId)==-1)||account.follower==undefined?true:false,
       isVerified:account.profile.identityVerified?true:false
     };
   },
