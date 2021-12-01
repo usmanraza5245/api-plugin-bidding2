@@ -1,7 +1,8 @@
-
+import generateUID from "./generateUID.js";
+import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 /**
  *
- * @method getAccountByuserName
+ * @method placeBidOnProduct
  * @summary Get all of a Unit's Variants or only a Unit's top level Variants.
  * @param {Object} context - an object containing the per-request state
  * @param {String} unitOrVariantId - A Unit or top level Unit Variant ID.
@@ -11,9 +12,11 @@
  * @param {Boolean} args.shouldIncludeArchived - Include archived units in results
  * @returns {Promise<Object[]>} Array of Unit Variant objects.
  */
-export default async function getAccountByuserName(context, username) {
+export default async function getProductsbyuserId(context, args,bid) {
   const { collections } = context;
-  const { Accounts } = collections;
- let accountResponse= await Accounts.findOne({"profile.username":username});
- return accountResponse;
+  const { Products } = collections;
+  const {userId} = args;
+  console.log("userId",userId)
+ let product= await Products.find({"uploadedBy.userId":userId,isVisible:true,type:"variant"}).toArray();
+ return product;
 }

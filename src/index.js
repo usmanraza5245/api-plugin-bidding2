@@ -26,6 +26,13 @@ const resolvers = {
 function biddingStartUp(context) {
   _context = context;
   const { app, collections, rootUrl } = context;
+  // context.simpleSchemas.Profile.extend({
+    
+  //   slug: {
+  //     type: String,
+  //     optional: true,
+  //   },
+  // });
 }
 
 /**
