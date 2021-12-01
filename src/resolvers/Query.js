@@ -91,7 +91,7 @@ export default {
         ? account.name
         : account.profile.name
         ? account.profile.name
-        : "Anonymous",
+        : "LoS",
       profilePhoto: account.profile.picture,
       followerData:account.follower,
       followingData:account.following,

@@ -19,7 +19,7 @@ export default {
           ? account.username
           : account.profile.username
           ? account.profile.username
-          : "Anonymous",
+          : "LoS",
         image: account.profile.picture,
       };
     },
@@ -34,7 +34,7 @@ export default {
           ? account.username
           : account.profile.username
           ? account.profile.username
-          : "Anonymous",
+          : "LoS",
         image: account.profile.picture,
       };
     },
