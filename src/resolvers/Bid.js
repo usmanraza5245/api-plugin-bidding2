@@ -1,5 +1,4 @@
 import getVariantbyId from "../utils/getVariantbyId.js";
-import getProductbyId from "../utils/getProductbyId.js";
 import getAccountById from "../utils/getAccountById.js";
 export default {
 //   Bid: {
@@ -20,7 +19,7 @@ export default {
           ? account.username
           : account.profile.username
           ? account.profile.username
-          : "Anonymous",
+          : "LoS",
         image: account.profile.picture,
       };
     },
@@ -35,7 +34,7 @@ export default {
           ? account.username
           : account.profile.username
           ? account.profile.username
-          : "Anonymous",
+          : "LoS",
         image: account.profile.picture,
       };
     },
