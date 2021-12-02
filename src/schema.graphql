@@ -197,6 +197,9 @@ type profileObj {
   profile: profile
   username: String
 }
+extend type ProductVariant {
+slug:String
+}
 type userProfile {
   name: String
   userName: String

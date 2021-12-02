@@ -319,7 +319,7 @@ export default async function createOffer(context, args) {
       details: null,
       from: accountId,
       hasDetails: false,
-      message: `Sent you a new message ${product.product.title}`,
+      message: `Sent you a new message on ${product.product.title}`,
       status: "unread",
       to: to,
       type: "offer",

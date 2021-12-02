@@ -84,6 +84,7 @@ export default {
   async getUserByuserName(parent, args, context, info) {
     let account = await getAccountByuserName(context, args.userName);
     console.log("account",account);
+    if(account){
     return {
       userId:account.userId,
       userName: args.userName,     
@@ -98,5 +99,8 @@ export default {
       canFollow:(account.follower&&account.follower.indexOf(context.userId)==-1)||account.follower==undefined?true:false,
       isVerified:account.profile.identityVerified?true:false
     };
+  }else{
+    throw new Error("User does not exist.")
+  }
   },
 };
