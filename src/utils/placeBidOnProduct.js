@@ -60,9 +60,9 @@ export default async function placeBidOnProduct(context, args) {
     amount: productPrice,
     text: "Original price",
     status: "new",
-    createdBy: offer.createdFor,
+    createdBy: soldby,
     _id: await generateUID(),
-    createdFor: offer.createdBy,
+    createdFor: accountId,
     createdAt: new Date(),
     type: "counterOffer",
   };
