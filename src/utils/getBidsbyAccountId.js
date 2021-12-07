@@ -18,7 +18,7 @@ export default async function getBidsbyAccountId(context, args) {
   const { shopId, productId, offer ,variantId,soldby} = args;
   let accountId = context.userId;
 //  let bids= await Bids.find({$or: [{"createdBy":accountId},{"soldBy":accountId}]}).sort({"updatedAt":-1}).limit(1).toArray();
- let bids= await Bids.aggregate([{$match:{$or: [{"createdBy":"RjxWNXFwqr9tdJ9wJ"},{"soldBy":"RjxWNXFwqr9tdJ9wJ"}]}},{$group:{_id:{createdBy:"$createdBy",soldBy:"$soldBy"}, data:{$push:"$$ROOT"}}}]).toArray()
+ let bids= await Bids.aggregate([{$match:{$or: [{"createdBy":accountId},{"soldBy":accountId}]}},{$group:{_id:{createdBy:"$createdBy",soldBy:"$soldBy"}, data:{$push:"$$ROOT"}}}]).toArray()
  let contacts=[];
  if(bids){
    bids.map(bid=>{
