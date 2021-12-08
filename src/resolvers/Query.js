@@ -92,7 +92,7 @@ export default {
         ? account.name
         : account.profile.name
         ? account.profile.name
-        : "LoS",
+        : null,
       profilePhoto: account.profile.picture,
       followerData:account.follower,
       followingData:account.following,

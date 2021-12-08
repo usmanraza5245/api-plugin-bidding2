@@ -55,29 +55,13 @@ export default async function addFollower(context, args) {
       });
       return {
         profile: {
-          name: senderAccount.name
-          ? senderAccount.name
-          : senderAccount.profile.name
-          ? senderAccount.profile.name
-          : senderAccount.username
-          ? senderAccount.username
-          : senderAccount.profile.username
-          ? senderAccount.profile.username
-          : "LoS",
+          name: senderAccount.name?senderAccount.name:senderAccount.profile.name? senderAccount.profile.name: null,
           picture: senderAccount.profile.picture,
           username: senderAccount.profile.username,
           
         },
         username: senderAccount.profile.username,
-        name: senderAccount.name
-          ? senderAccount.name
-          : senderAccount.profile.name
-          ? senderAccount.profile.name
-          : senderAccount.username
-          ? senderAccount.username
-          : senderAccount.profile.username
-          ? senderAccount.profile.username
-          : "LoS",
+        name: senderAccount.name?senderAccount.name:senderAccount.profile.name? senderAccount.profile.name: null
        
       };
     } else {
