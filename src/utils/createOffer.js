@@ -267,6 +267,9 @@ export default async function createOffer(context, args) {
           console.log("cart updated", cart_update);
         }
       }
+      const date = new Date();
+      date.setDate(date.getDate() + 1);
+      valid_till = date;
       bid_update = await Bids.updateOne(
         { _id: bidId },
         {
@@ -290,7 +293,9 @@ export default async function createOffer(context, args) {
       );
     } else {
       // game lost
-
+      const date = new Date();
+      date.setDate(date.getDate() + 1);
+      valid_till = date;
       loserOffer = bidExist.buyerOffer ? bidExist.buyerOffer : null;
       winnerOffer = bidExist.sellerOffer ? bidExist.sellerOffer : null;
       bid_update = await Bids.updateOne(
