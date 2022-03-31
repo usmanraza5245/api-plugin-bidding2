@@ -11,14 +11,14 @@ export default {
     async createdByinfo(parent, args, context, info) {
       let account=await getAccountById(context,parent.createdBy)
       return {
-        name: account.name
-          ? account.name
-          : account.profile.name
-          ? account.profile.name
-          : account.username
+        name: account.username
           ? account.username
           : account.profile.username
           ? account.profile.username
+          : account.name
+          ? account.name
+          : account.profile.name
+          ? account.profile.name
           : "LoS",
         image: account.profile.picture,
       };
@@ -26,14 +26,14 @@ export default {
     async soldByInfo(parent, args, context, info) {
       let account= await getAccountById(context,parent.soldBy)
       return {
-        name: account.name
-          ? account.name
-          : account.profile.name
-          ? account.profile.name
-          : account.username
+       name: account.username
           ? account.username
           : account.profile.username
           ? account.profile.username
+          : account.name
+          ? account.name
+          : account.profile.name
+          ? account.profile.name
           : "LoS",
         image: account.profile.picture,
       };
