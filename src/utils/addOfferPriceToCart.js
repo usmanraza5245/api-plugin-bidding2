@@ -39,15 +39,15 @@ export default async function addOfferPriceToCart(context, args) {
         { _id: cartExist._id },
         {
           $set: {
-            "items.0.price.amount": bidExist.activeOffer.amount.amount,
-            "items.0.subtotal.amount": bidExist.activeOffer.amount.amount,
+            "items.0.price.amount": bidExist.acceptedOffer.amount.amount,
+            "items.0.subtotal.amount": bidExist.acceptedOffer.amount.amount,
           },
         }
       );
       console.log("cart_update,", cart_update);
       console.log("s", {
-        "items.0.price.amount": bidExist.activeOffer.amount.amount,
-        "items.0.subtotal.amount": bidExist.activeOffer.amount.amount,
+        "items.0.price.amount": bidExist.acceptedOffer.amount.amount,
+        "items.0.subtotal.amount": bidExist.acceptedOffer.amount.amount,
       });
     }
   }
