@@ -17,6 +17,6 @@ export default async function getProductsbyuserId(context, args,bid) {
   const { Products } = collections;
   const {userId} = args;
   console.log("userId",userId)
- let product= await Products.find({"uploadedBy.userId":userId,isVisible:true,type:"variant"}).toArray();
+ let product= await Products.find({"uploadedBy.userId":userId,isVisible:true,type:"simple"}).toArray();
  return product;
 }
