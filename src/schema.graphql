@@ -20,8 +20,12 @@ type Bid implements Node {
   gameAcceptedBy: ID
   acceptedOffer: Offer
   shopId: ID!
+  name: String
+  description: String
   createdBy: ID
   wonBy: ID
+  fileId: String
+  fileUrl: String
   lostBy: ID
   createdByinfo: createdByUserinfo
   soldBy: ID
@@ -42,7 +46,8 @@ type Offer implements Node {
   canAccept: ID
 }
 extend type Query {
-  getBidsbyAccountId: [Bid]
+  getBidsbyAccountId(isSeller: Boolean!): [Bid]
+  getBidsOnProduct(input: activeBidInput): [Bid]
   getBidsbySellerId: [Bid]
   myNotifications: [Notification]
   getActiveBidOnProduct(input: activeBidInput): activeBidPayLoad
@@ -149,6 +154,10 @@ input placeBidInput {
   offer: offerInput!
   offerType: offerTypes!
   productPrice: MoneyInput!
+  fileUrl: String
+  fileId: String
+  name: String
+  description: String
 }
 input offerInput {
   amount: MoneyInput!

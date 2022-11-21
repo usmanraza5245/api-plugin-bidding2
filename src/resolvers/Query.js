@@ -2,6 +2,7 @@ import getBidsbyAccountId from "../utils/getBidsbyAccountId.js";
 import getBidbyAccountId from "../utils/getBidbyAccountId.js";
 import getBidsbySellerId from "../utils/getBidsbySellerId.js";
 import getActiveBids from "../utils/getActiveBids.js";
+import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 import getNotificationByAccountId from "../utils/getNotificationByAccountId.js";
 import getAccountByuserName from "../utils/getAccountByuserName.js";
 import isAvailable from "../utils/isAvailable.js"
@@ -69,6 +70,36 @@ export default {
       console.log("no bid exist");
       return null;
     }
+  },
+  async getBidsOnProduct(parent, args, context, info){
+    let accountId = context.userId;
+    if (!accountId || accountId == null) {
+      console.log("Unauthenticated user");
+      throw new Error("Unauthenticated user");
+    }
+    // let activeBids = await getActiveBids(context, args.input);
+    // console.log("active bid", activeBids);
+    // let is_valid = false;
+    const { collections } = context;
+    const { productId, variantId } = args.input;
+    const { Bids } = collections;
+    // let accountId = context.userId;
+
+    let decodeProductId = decodeOpaqueId(productId).id;
+    let decodeVariantId = decodeOpaqueId(variantId).id;
+    if (decodeProductId == productId || productId.length == 0) {
+      throw new Error("ProductId must be a Reaction ID");
+    }
+    if (decodeVariantId == variantId || variantId.length == 0) {
+      throw new Error("variantId must be a Reaction ID");
+    }
+    console.log("accountId",accountId)
+    let bidsOnProduct = await Bids.find({
+      productId: decodeProductId,
+      variantId: decodeVariantId
+    }).toArray();
+    console.log("bidsOnProduct", bidsOnProduct)
+    return bidsOnProduct;
   },
   async getBidsbyUserId(parent, args, context, info) {
     console.log("getBidsbyUserList");

@@ -26,6 +26,10 @@ export default async function placeBidOnProduct(context, args) {
     soldby,
     offerType,
     productPrice,
+    fileUrl,
+    fileId,
+    name,
+    description
   } = args;
   let accountId = context.userId;
   let decodeProductId = decodeOpaqueId(productId).id;
@@ -81,6 +85,10 @@ export default async function placeBidOnProduct(context, args) {
     canAccept: soldby,
     activeOffer: offer_obj,
     buyerOffer: offer_obj,
+    fileUrl: fileUrl,
+    fileId: fileId,
+    name: name,
+    description: description, 
     sellerOffer: offer_seller,
     status: "new",
     soldBy: soldby,
