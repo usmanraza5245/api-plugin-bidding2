@@ -3,6 +3,7 @@ import createOffer from "../utils/createOffer.js";
 import addOfferPriceToCart from "../utils/addOfferPriceToCart.js";
 import createNotification from "../utils/createNotification.js";
 import markAsRead from "../utils/markAsRead.js";
+import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 import addFollower from "../utils/addFollower.js";
 import removeFollower from "../utils/removeFollower.js";
 
@@ -68,4 +69,48 @@ export default {
     return unfollow_response;
 
   },
+  async removeBid(parent, args, context, info) {
+    const { collections } = context;
+    const { Bids } = collections;
+    const { bidId } = args;
+    let accountId = context.userId;
+    console.log("user id", accountId);
+    let deletedBid = await Bids.remove({ _id: bidId, createdBy: accountId });
+    console.log("deleted Bid", deletedBid);
+    if( deletedBid?.result?.n > 0 )
+      return {
+        success: true,
+        status: 200,
+        message: "bid deleted."
+      }
+    else
+      return {
+        success: false,
+        status: 200,
+        message: "could not delete bid."
+      }
+  },
+  async removeProduct(parent, args, context, info) {
+    const { collections } = context;
+    const { Products, Catalog } = collections;
+    const { productId } = args;
+    let accountId = context.userId;
+    let decodeProductId = decodeOpaqueId(productId).id;
+    console.log("user id", accountId, decodeProductId);
+    let deletedFromCatalog = await Catalog.remove({ "product.productId": decodeProductId, "product.uploadedBy.userId": accountId });
+    let deletedFromProduct = await Products.remove({ _id: decodeProductId, "uploadedBy.userId": accountId });
+    console.log("deleted deletedFromCatalog", deletedFromCatalog, "deletedFromProduct", deletedFromProduct);
+    if( deletedFromProduct?.result?.n > 0 )
+      return {
+        success: true,
+        status: 200,
+        message: "product deleted."
+      }
+    else
+      return {
+        success: false,
+        status: 200,
+        message: "could not delete product."
+      }
+  }
 };

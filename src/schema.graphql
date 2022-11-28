@@ -116,9 +116,16 @@ type offerSubscriptionPayload {
   variantId: ID
   userId: ID
 }
+type removed {
+  success: Boolean
+  message: String
+  status: Int
+}
 extend type Mutation {
+  removeProduct(productId: String!): removed
   placeBidOnProduct(input: placeBidInput): placeBidPayLoad
   sendOffer(input: sendOfferInput): Offer
+  removeBid(bidId: String!): removed
   updateCartOfferPrice(cartId: ID!, bidId: ID!): Cart
   createNotification(input: createNotificationInput): Notification
   markAsRead(notificationId: ID): Notification
