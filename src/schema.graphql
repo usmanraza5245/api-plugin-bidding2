@@ -45,8 +45,19 @@ type Offer implements Node {
   createdFor: ID
   canAccept: ID
 }
+type Opportunities {
+  _id: String
+  product: Product  
+}
+
+input opportunityInput {
+  userId: String
+  pageNo: Int!
+  perPage: Int!
+}
 extend type Query {
   getBidsbyAccountId(isSeller: Boolean!): [Bid]
+  getOpportunities(input: opportunityInput): [Opportunities]
   getBidsOnProduct(input: activeBidInput): [Bid]
   getBidsbySellerId: [Bid]
   myNotifications: [Notification]

@@ -92,7 +92,7 @@ export default {
   },
   async removeProduct(parent, args, context, info) {
     const { collections } = context;
-    const { Products, Catalog } = collections;
+    const { Products, Catalog, Bids } = collections;
     const { productId } = args;
     let accountId = context.userId;
     let decodeProductId = decodeOpaqueId(productId).id;
@@ -100,12 +100,15 @@ export default {
     let deletedFromCatalog = await Catalog.remove({ "product.productId": decodeProductId, "product.uploadedBy.userId": accountId });
     let deletedFromProduct = await Products.remove({ _id: decodeProductId, "uploadedBy.userId": accountId });
     console.log("deleted deletedFromCatalog", deletedFromCatalog, "deletedFromProduct", deletedFromProduct);
-    if( deletedFromProduct?.result?.n > 0 )
+    if( deletedFromProduct?.result?.n > 0 ){
+      let deletedFromBid = await Bids.remove({ productId: decodeProductId });
+      console.log("deletedFromBid", deletedFromBid)
       return {
         success: true,
         status: 200,
         message: "product deleted."
       }
+    } 
     else
       return {
         success: false,

@@ -134,4 +134,38 @@ export default {
     throw new Error("User does not exist.")
   }
   },
+  async getOpportunities(parent, args, context, info) {
+    const { userId, pageNo, perPage } = args.input;
+    const { collections } = context;
+    const { Catalog, Products } = collections;
+    if( userId ){
+      let selector = {
+        "product.uploadedBy.userId": userId
+      }
+      let opportunities = await Catalog.find(selector).skip( pageNo > 0 ? ( ( pageNo - 1 ) * perPage ) : 0 )
+      .limit( perPage ).toArray();
+      console.log("first if opportunities", opportunities)
+      return opportunities;
+    } else {
+      let opportunities = await Catalog.find().skip( pageNo > 0 ? ( ( pageNo - 1 ) * perPage ) : 0 )
+      .limit( perPage ).toArray();
+      console.log("else opportunities", opportunities)
+      return opportunities;
+    }
+    // Only include visible variants if `false`
+    // Otherwise both hidden and visible will be shown
+    // if (shouldIncludeHidden === false) {
+    //   selector.isVisible = true;
+    // }
+  
+    // // Exclude archived (deleted) variants if set to `false`
+    // // Otherwise include archived variants in the results
+    // if (shouldIncludeArchived === false) {
+    //   selector.isDeleted = {
+    //     $ne: true,
+    //   };
+    // }
+  
+    
+  },
 };
