@@ -5,6 +5,8 @@ import getActiveBids from "../utils/getActiveBids.js";
 import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 import getNotificationByAccountId from "../utils/getNotificationByAccountId.js";
 import getAccountByuserName from "../utils/getAccountByuserName.js";
+import ObjectId  from 'mongodb';
+console.log("ObjectId-----------  ", ObjectId, ObjectId.ObjectID)
 import isAvailable from "../utils/isAvailable.js"
 export default {
   async isAvailable(parent,args,context,info){
@@ -137,13 +139,17 @@ export default {
   async getOpportunities(parent, args, context, info) {
     const { userId, pageNo, perPage } = args.input;
     const { collections } = context;
+    console.log("userIds", userId)
     const { Catalog, Products } = collections;
     if( userId ){
-      let selector = {
-        "product.uploadedBy.userId": userId
-      }
-      let opportunities = await Catalog.find(selector).skip( pageNo > 0 ? ( ( pageNo - 1 ) * perPage ) : 0 )
-      .limit( perPage ).toArray();
+      // let selector = {
+      //   "product.uploadedBy.userId": userId
+      // }
+      // var documentIds = userId.map(function(myId) { return ObjectId.ObjectID.ObjectId(myId); });
+      // console.log("documents", documentIds)
+      let opportunities = await Catalog.find({ "product.uploadedBy.userId": { $in: userId }}).skip( pageNo > 0 ? ( ( pageNo - 1 ) * perPage ) : 0 )
+      .limit(perPage).toArray();
+      // let opportunities = await Catalog.aggregate({ $match:  {"product.uploadedBy.userId": { $eq: userId }}}).toArray();
       console.log("first if opportunities", opportunities)
       return opportunities;
     } else {

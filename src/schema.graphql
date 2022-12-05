@@ -51,7 +51,7 @@ type Opportunities {
 }
 
 input opportunityInput {
-  userId: String
+  userId: [String]
   pageNo: Int!
   perPage: Int!
 }
