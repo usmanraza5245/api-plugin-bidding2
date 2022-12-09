@@ -27,6 +27,8 @@ type Bid implements Node {
   fileId: String
   fileUrl: String
   lostBy: ID
+  isShortList: Boolean
+  isFavourite: Boolean
   createdByinfo: createdByUserinfo
   soldBy: ID
   soldByInfo: createdByUserinfo
@@ -55,12 +57,23 @@ input opportunityInput {
   pageNo: Int!
   perPage: Int!
 }
+input onBidInput {
+  productId: ID!
+  variantId: ID!
+}
+input filterInput {
+  productId: ID!
+  variantId: ID!
+  flag: String!
+}
 extend type Query {
   getBidsbyAccountId(isSeller: Boolean!): [Bid]
   getOpportunities(input: opportunityInput): [Opportunities]
-  getBidsOnProduct(input: activeBidInput): [Bid]
+  getMyBidsOnProduct(input: onBidInput): [Bid]
   getBidsbySellerId: [Bid]
+  getBidsOnMyProduct(input: onBidInput): [Bid]
   myNotifications: [Notification]
+  getFilteredBids(input: filterInput): [Bid]
   getActiveBidOnProduct(input: activeBidInput): activeBidPayLoad
   getBidsbyUserId(userId: ID!, isSeller: Boolean!): [Bid]
 }
@@ -132,8 +145,21 @@ type removed {
   message: String
   status: Int
 }
+
+type updated {
+  success: Boolean
+  message: String
+  status: Int
+}
+
+input updateBid {
+  isShortList: Boolean!
+  isFavourite: Boolean!
+  bidId: String!
+}
 extend type Mutation {
   removeProduct(productId: String!): removed
+  updateBidonProduct(input: updateBid): updated
   placeBidOnProduct(input: placeBidInput): placeBidPayLoad
   sendOffer(input: sendOfferInput): Offer
   removeBid(bidId: String!): removed
@@ -175,6 +201,8 @@ input placeBidInput {
   fileUrl: String
   fileId: String
   name: String
+  isShortList: Boolean!
+  isFavourite: Boolean!
   description: String
 }
 input offerInput {

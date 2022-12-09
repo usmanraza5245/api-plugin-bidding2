@@ -73,7 +73,7 @@ export default {
       return null;
     }
   },
-  async getBidsOnProduct(parent, args, context, info){
+  async getMyBidsOnProduct(parent, args, context, info){
     let accountId = context.userId;
     if (!accountId || accountId == null) {
       console.log("Unauthenticated user");
@@ -98,7 +98,8 @@ export default {
     console.log("accountId",accountId)
     let bidsOnProduct = await Bids.find({
       productId: decodeProductId,
-      variantId: decodeVariantId
+      variantId: decodeVariantId,
+      createdBy: accountId
     }).toArray();
     console.log("bidsOnProduct", bidsOnProduct)
     return bidsOnProduct;
@@ -174,4 +175,69 @@ export default {
   
     
   },
+  async getBidsOnMyProduct(parent, args, context, info){
+    let accountId = context.userId;
+    if (!accountId || accountId == null) {
+      console.log("Unauthenticated user");
+      throw new Error("Unauthenticated user");
+    }
+    const { collections } = context;
+    const { productId, variantId } = args.input;
+    const { Bids } = collections;
+    // let accountId = context.userId;
+
+    let decodeProductId = decodeOpaqueId(productId).id;
+    let decodeVariantId = decodeOpaqueId(variantId).id;
+    if (decodeProductId == productId || productId.length == 0) {
+      throw new Error("ProductId must be a Reaction ID");
+    }
+    if (decodeVariantId == variantId || variantId.length == 0) {
+      throw new Error("variantId must be a Reaction ID");
+    }
+    console.log("accountId",accountId)
+    let bidsOnProduct = await Bids.find({
+      productId: decodeProductId,
+      variantId: decodeVariantId,
+      soldBy: accountId
+    }).toArray();
+    console.log("bidsOnProduct", bidsOnProduct)
+    return bidsOnProduct;
+  },
+  async getFilteredBids(parent, args, context, info) {
+    let accountId = context.userId;
+    if (!accountId || accountId == null) {
+      console.log("Unauthenticated user");
+      throw new Error("Unauthenticated user");
+    }
+    const { collections } = context;
+    const { productId, variantId, flag } = args.input;
+    const { Bids } = collections;
+    // let accountId = context.userId;
+
+    let decodeProductId = decodeOpaqueId(productId).id;
+    let decodeVariantId = decodeOpaqueId(variantId).id;
+    if (decodeProductId == productId || productId.length == 0) {
+      throw new Error("ProductId must be a Reaction ID");
+    }
+    if (decodeVariantId == variantId || variantId.length == 0) {
+      throw new Error("variantId must be a Reaction ID");
+    }
+    console.log("accountId",accountId)
+    let bidsOnProduct;
+    if(flag === "shortListed"){
+      bidsOnProduct = await Bids.find({
+        productId: decodeProductId,
+        variantId: decodeVariantId,
+        isShortList: true
+      }).toArray();
+    } else if( flag === "favourite" ){
+      bidsOnProduct = await Bids.find({
+        productId: decodeProductId,
+        variantId: decodeVariantId,
+        isFavourite: true
+      }).toArray();
+    }
+    console.log("bidsOnProduct", bidsOnProduct)
+    return bidsOnProduct;
+  }
 };

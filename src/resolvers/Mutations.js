@@ -115,5 +115,31 @@ export default {
         status: 200,
         message: "could not delete product."
       }
+  },
+  async updateBidonProduct(parent, args, context, info) {
+    const { collections } = context;
+    const { Bids } = collections;
+    const { isShortList, isFavourite, bidId } = args.input;
+    let accountId = context.userId;
+    // let decodeProductId = decodeOpaqueId(productId).id;
+    console.log("updated bids", accountId, bidId, isFavourite, isShortList);
+    let updatedBid = await Bids.updateOne(
+      { _id: bidId },
+      { $set: { isShortList: isShortList, isFavourite: isFavourite }}
+    )
+    console.log("updatedBid", updatedBid)
+    if( updatedBid?.result?.nModified > 0 ){
+      return {
+        success: true,
+        status: 200,
+        message: "operation successfull."
+      }
+    } 
+    else
+      return {
+        success: false,
+        status: 200,
+        message: "could not delete operation."
+      }
   }
 };
