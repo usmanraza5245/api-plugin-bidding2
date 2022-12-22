@@ -141,5 +141,39 @@ export default {
         status: 200,
         message: "could not delete operation."
       }
+  },
+  // accept bid offer mutation
+  async acceptBid(parent, args, context, info) {
+    try{
+      let _id = args.bidId;
+      let { Bids } = context.collections;
+      // update bid status to accepted
+      console.log(process.env.SUBMISSION_ACCEPTED)
+      let acceptedBid = await Bids.updateOne(
+        { _id },
+        { $set: { status: process.env.SUBMISSION_ACCEPTED } }
+      )
+      console.log("acceptedBid", acceptedBid);
+      if( acceptedBid?.result?.nModified > 0 ){
+        return {
+          success: true,
+          status: 200,
+          message: "Submission Accepted."
+        }
+      } else {
+        return {
+          success: false,
+          status: 200,
+          message: "could not accept."
+        }
+      }
+    }catch(err){
+      console.log("Error", err);
+      return {
+        success: false,
+        message: "Server Error.",
+        status: 500
+      }
+    }
   }
 };

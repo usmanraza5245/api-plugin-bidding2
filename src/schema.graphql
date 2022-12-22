@@ -157,6 +157,12 @@ type updated {
   status: Int
 }
 
+type acceptedBid {
+  success: Boolean
+  message: String
+  status: Int
+}
+
 input updateBid {
   isShortList: Boolean!
   isFavourite: Boolean!
@@ -171,6 +177,7 @@ extend type Mutation {
   updateCartOfferPrice(cartId: ID!, bidId: ID!): Cart
   createNotification(input: createNotificationInput): Notification
   markAsRead(notificationId: ID): Notification
+  acceptBid(bidId: String!): acceptedBid
 }
 
 enum coinTossOptions {
