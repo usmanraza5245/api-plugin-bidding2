@@ -32,7 +32,15 @@ type Bid implements Node {
   createdByinfo: createdByUserinfo
   soldBy: ID
   soldByInfo: createdByUserinfo
+  bidMetaFields: [bidMetaFields]
 }
+
+type bidMetaFields {
+  collaboratorEmail: String
+  collaboratorSplit: String
+  collaboratorName: String
+}
+
 type Offer implements Node {
   _id: ID!
   amount: Money!
@@ -216,7 +224,15 @@ input placeBidInput {
   isShortList: Boolean!
   isFavourite: Boolean!
   description: String
+  bidMetaFieldsInput: [bidMetaFieldsInput]
 }
+
+input bidMetaFieldsInput {
+  collaboratorEmail: String
+  collaboratorSplit: String
+  collaboratorName: String
+}
+
 input offerInput {
   amount: MoneyInput!
   text: String

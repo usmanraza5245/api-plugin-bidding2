@@ -31,7 +31,8 @@ export default async function placeBidOnProduct(context, args) {
     name,
     description,
     isShortList,
-    isFavourite
+    isFavourite,
+    bidMetaFieldsInput
   } = args;
   let accountId = context.userId;
   let decodeProductId = decodeOpaqueId(productId).id;
@@ -92,7 +93,8 @@ export default async function placeBidOnProduct(context, args) {
     name: name,
     isShortList: isShortList,
     isFavourite: isFavourite,
-    description: description, 
+    bidMetaFields: bidMetaFieldsInput,
+    description: description,
     sellerOffer: offer_seller,
     status: "new",
     soldBy: soldby,
