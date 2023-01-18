@@ -91,15 +91,24 @@ export default {
       }
   },
   async removeProduct(parent, args, context, info) {
-    const { collections } = context;
+    const { collections, user } = context;
     const { Products, Catalog, Bids } = collections;
     const { productId } = args;
     let accountId = context.userId;
+    let deletedFromCatalog, deletedFromProduct;
     let decodeProductId = decodeOpaqueId(productId).id;
-    console.log("user id", accountId, decodeProductId);
-    let deletedFromCatalog = await Catalog.remove({ "product.productId": decodeProductId, "product.uploadedBy.userId": accountId });
-    let deletedFromProduct = await Products.remove({ _id: decodeProductId, "uploadedBy.userId": accountId });
-    console.log("deleted deletedFromCatalog", deletedFromCatalog, "deletedFromProduct", deletedFromProduct);
+    console.log("process.env.ADMIN_EMAIL", process.env.ADMIN_EMAIL)
+    // console.log("user id", accountId, decodeProductId, user);
+    if( user?.emails?.[0]?.address === process.env.ADMIN_EMAIL ){
+      console.log("first if")
+      deletedFromCatalog = await Catalog.remove({ "product.productId": decodeProductId });
+      deletedFromProduct = await Products.remove({ _id: decodeProductId });
+    } else {
+      console.log("else")
+      deletedFromCatalog = await Catalog.remove({ "product.productId": decodeProductId, "product.uploadedBy.userId": accountId });
+      deletedFromProduct = await Products.remove({ _id: decodeProductId, "uploadedBy.userId": accountId });
+    }
+    // console.log("deleted deletedFromCatalog", deletedFromCatalog, "deletedFromProduct", deletedFromProduct);
     if( deletedFromProduct?.result?.n > 0 ){
       let deletedFromBid = await Bids.remove({ productId: decodeProductId });
       console.log("deletedFromBid", deletedFromBid)
