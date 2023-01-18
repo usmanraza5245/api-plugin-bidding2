@@ -99,6 +99,7 @@ export default {
     let decodeProductId = decodeOpaqueId(productId).id;
     console.log("process.env.ADMIN_EMAIL", process.env.ADMIN_EMAIL)
     // console.log("user id", accountId, decodeProductId, user);
+    console.log("userInfo", user)
     if( user?.emails?.[0]?.address === process.env.ADMIN_EMAIL ){
       console.log("first if")
       deletedFromCatalog = await Catalog.remove({ "product.productId": decodeProductId });
