@@ -39,6 +39,7 @@ type bidMetaFields {
   collaboratorEmail: String
   collaboratorSplit: String
   collaboratorName: String
+  status: String
 }
 
 type Offer implements Node {
@@ -231,6 +232,7 @@ input bidMetaFieldsInput {
   collaboratorEmail: String
   collaboratorSplit: String
   collaboratorName: String
+  status: String
 }
 
 input offerInput {
