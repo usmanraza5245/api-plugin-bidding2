@@ -1,7 +1,7 @@
 {
   "name": "@husamaz1994/api-plugin-bidding",
   "description": "Boilerplate Example plugin for the Reaction API",
-  "version": "2.1.8",
+  "version": "3.1.8",
   "main": "index.js",
   "type": "module",
   "engines": {
