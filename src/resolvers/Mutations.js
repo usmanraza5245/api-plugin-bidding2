@@ -185,5 +185,42 @@ export default {
         status: 500
       }
     }
-  }
+  },
+  async updateSubmissionCollaboratorStatus(parent, args, context, info){
+    let accountId = context.userId;
+    if (!accountId || accountId == null) {
+      console.log("Unauthenticated user");
+      throw new Error("Unauthenticated user");
+    }
+    const { collections } = context;
+    const { id, email } = args.input;
+    const { Bids } = collections;
+    // let accountId = context.userId;
+    let updatedStatus = await Bids.update(
+      {
+      _id: id,
+      "bidMetaFields.collaboratorEmail": email
+      },
+      {
+        $set: {
+          "bidMetaFields.$.status": process.env.SUBMISSION_ACCEPTED
+        }
+      }
+    )
+    console.log("SUBMISSION_ACCEPTED", updatedStatus);
+    if(updatedStatus?.nModified > 0) {
+      return  {
+        success: true,
+        message: "Status Updated.",
+        status: 200
+      }
+    } else {
+      return  {
+        success: false,
+        message: "Status Not Updated.",
+        status: 200
+      }
+    }
+    
+  },
 };

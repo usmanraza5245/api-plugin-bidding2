@@ -177,7 +177,14 @@ input updateBid {
   isFavourite: Boolean!
   bidId: String!
 }
+
+input acceptSubmissionStatus {
+  id: String!
+  email: String!
+}
+
 extend type Mutation {
+  updateSubmissionCollaboratorStatus(input: acceptSubmissionStatus!): updated
   removeProduct(productId: String!): removed
   updateBidonProduct(input: updateBid): updated
   placeBidOnProduct(input: placeBidInput): placeBidPayLoad
