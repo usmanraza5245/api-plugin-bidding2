@@ -40,6 +40,9 @@ type bidMetaFields {
   collaboratorSplit: String
   collaboratorName: String
   status: String
+  points: String
+  publishing: String
+  advance: String
 }
 
 type Offer implements Node {
@@ -240,6 +243,9 @@ input bidMetaFieldsInput {
   collaboratorSplit: String
   collaboratorName: String
   status: String
+  points: String
+  publishing: String
+  advance: String
 }
 
 input offerInput {
