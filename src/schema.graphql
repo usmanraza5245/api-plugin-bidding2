@@ -27,6 +27,7 @@ type Bid implements Node {
   fileId: String
   fileUrl: String
   lostBy: ID
+  bidSplit: String
   isShortList: Boolean
   isFavourite: Boolean
   createdByinfo: createdByUserinfo
@@ -40,9 +41,6 @@ type bidMetaFields {
   collaboratorSplit: String
   collaboratorName: String
   status: String
-  points: String
-  publishing: String
-  advance: String
 }
 
 type Offer implements Node {
@@ -232,6 +230,7 @@ input placeBidInput {
   fileUrl: String
   fileId: String
   name: String
+  bidSplit: String
   isShortList: Boolean!
   isFavourite: Boolean!
   description: String
@@ -243,9 +242,6 @@ input bidMetaFieldsInput {
   collaboratorSplit: String
   collaboratorName: String
   status: String
-  points: String
-  publishing: String
-  advance: String
 }
 
 input offerInput {
