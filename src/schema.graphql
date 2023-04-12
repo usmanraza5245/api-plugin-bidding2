@@ -1,9 +1,9 @@
 type Bid implements Node {
   _id: ID!
   productId: ID!
-  productSlug:String!
-  reactionVariantId:ID!
-  reactionProductId:ID!
+  productSlug: String!
+  reactionVariantId: ID!
+  reactionProductId: ID!
   product: ProductVariant
   updatedAt: DateTime
   createdAt: DateTime
@@ -34,6 +34,10 @@ type Bid implements Node {
   soldBy: ID
   soldByInfo: createdByUserinfo
   bidMetaFields: [bidMetaFields]
+  tuneVibe: [String]
+  isMasterSample: Boolean
+  pitchingPeriod: String
+  exclusivePrice: Float
 }
 
 type bidMetaFields {
@@ -59,7 +63,7 @@ type Offer implements Node {
 }
 type Opportunities {
   _id: String
-  product: Product  
+  product: Product
 }
 
 input opportunityInput {
@@ -235,6 +239,10 @@ input placeBidInput {
   isFavourite: Boolean!
   description: String
   bidMetaFieldsInput: [bidMetaFieldsInput]
+  tuneVibe: [String]
+  isMasterSample: Boolean
+  pitchingPeriod: String
+  exclusivePrice: Float
 }
 
 input bidMetaFieldsInput {
@@ -272,7 +280,7 @@ extend type Mutation {
 }
 extend type Query {
   getUserByuserName(userName: String!): userProfile
-  isAvailable(userName:String!):Boolean
+  isAvailable(userName: String!): Boolean
 }
 type followUserInfo {
   image: String
@@ -292,7 +300,7 @@ type profileObj {
   username: String
 }
 extend type ProductVariant {
-slug:String
+  slug: String
 }
 type userProfile {
   name: String
