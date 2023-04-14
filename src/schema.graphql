@@ -38,6 +38,7 @@ type Bid implements Node {
   isMasterSample: Boolean
   pitchingPeriod: String
   exclusivePrice: Float
+  fitGuidline: Boolean
 }
 
 type bidMetaFields {
@@ -183,6 +184,11 @@ input updateBid {
   bidId: String!
 }
 
+input updateBidFlag {
+  fitGuidline: Boolean!
+  bidId: String!
+}
+
 input acceptSubmissionStatus {
   id: String!
   email: String!
@@ -192,6 +198,7 @@ extend type Mutation {
   updateSubmissionCollaboratorStatus(input: acceptSubmissionStatus!): updated
   removeProduct(productId: String!): removed
   updateBidonProduct(input: updateBid): updated
+  updateBidFlagonProduct(input: updateBidFlag): updated
   placeBidOnProduct(input: placeBidInput): placeBidPayLoad
   sendOffer(input: sendOfferInput): Offer
   removeBid(bidId: String!): removed
@@ -243,6 +250,7 @@ input placeBidInput {
   isMasterSample: Boolean
   pitchingPeriod: String
   exclusivePrice: Float
+  fitGuidline: Boolean
 }
 
 input bidMetaFieldsInput {
