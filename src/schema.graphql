@@ -81,6 +81,45 @@ input filterInput {
   variantId: ID!
   flag: String!
 }
+
+"A connection edge in which each node is a `Bid` object"
+type productBidEdge {
+  "The cursor that represents this node in the paginated results"
+  cursor: ConnectionCursor!
+
+  "The catalog item"
+  node: Bid
+}
+
+input paginatedBidInput {
+  productId: ID!
+  variantId: ID!
+
+  "Optional text search query"
+  searchQuery: String
+
+  "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."
+  after: ConnectionCursor
+
+  "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
+  before: ConnectionCursor
+
+  "Return at most this many results. This parameter may be used with either `after` or `offset` parameters."
+  first: ConnectionLimitInt
+
+  "Return at most this many results. This parameter may be used with the `before` parameter."
+  last: ConnectionLimitInt
+
+  "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
+  offset: Int
+}
+
+type productBidsPaginated {
+  cursor: [productBidEdge]
+  nodes: [Bid]
+  pageInfo: PageInfo
+  totalCount: Int!
+}
 type productBids {
   bids: [Bid]
   count: Int
@@ -91,7 +130,7 @@ extend type Query {
   getOpportunities(input: opportunityInput): [Opportunities]
   getMyBidsOnProduct(input: onBidInput): [Bid]
   getBidsbySellerId: [Bid]
-  getBidsOnMyProduct(input: onBidInput): [Bid]
+  getBidsOnMyProduct(input: paginatedBidInput): productBidsPaginated
   myNotifications: [Notification]
   getFilteredBids(input: filterInput): [Bid]
   getActiveBidOnProduct(input: activeBidInput): activeBidPayLoad

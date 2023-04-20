@@ -1,3 +1,5 @@
+import getPaginatedResponse from "@reactioncommerce/api-utils/graphql/getPaginatedResponse.js";
+import wasFieldRequested from "@reactioncommerce/api-utils/graphql/wasFieldRequested.js";
 import getBidsbyAccountId from "../utils/getBidsbyAccountId.js";
 import getBidbyAccountId from "../utils/getBidbyAccountId.js";
 import getBidsbySellerId from "../utils/getBidsbySellerId.js";
@@ -5,15 +7,14 @@ import getActiveBids from "../utils/getActiveBids.js";
 import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 import getNotificationByAccountId from "../utils/getNotificationByAccountId.js";
 import getAccountByuserName from "../utils/getAccountByuserName.js";
-import ObjectId  from 'mongodb';
-console.log("ObjectId-----------  ", ObjectId, ObjectId.ObjectID)
-import isAvailable from "../utils/isAvailable.js"
+import ObjectId from "mongodb";
+console.log("ObjectId-----------  ", ObjectId, ObjectId.ObjectID);
+import isAvailable from "../utils/isAvailable.js";
 export default {
-  async isAvailable(parent,args,context,info){
+  async isAvailable(parent, args, context, info) {
     console.log("is available ");
-    let response=await isAvailable(context,args);
+    let response = await isAvailable(context, args);
     return response;
-
   },
   async getBidsbyAccountId(parent, args, context, info) {
     let accountId = context.userId;
@@ -73,7 +74,7 @@ export default {
       return null;
     }
   },
-  async getMyBidsOnProduct(parent, args, context, info){
+  async getMyBidsOnProduct(parent, args, context, info) {
     let accountId = context.userId;
     if (!accountId || accountId == null) {
       console.log("Unauthenticated user");
@@ -95,13 +96,13 @@ export default {
     if (decodeVariantId == variantId || variantId.length == 0) {
       throw new Error("variantId must be a Reaction ID");
     }
-    console.log("accountId",accountId)
+    console.log("accountId", accountId);
     let bidsOnProduct = await Bids.find({
       productId: decodeProductId,
       variantId: decodeVariantId,
-      createdBy: accountId
+      createdBy: accountId,
     }).toArray();
-    console.log("bidsOnProduct", bidsOnProduct)
+    console.log("bidsOnProduct", bidsOnProduct);
     return bidsOnProduct;
   },
   async getBidsbyUserId(parent, args, context, info) {
@@ -117,46 +118,57 @@ export default {
   },
   async getUserByuserName(parent, args, context, info) {
     let account = await getAccountByuserName(context, args.userName);
-    console.log("account",account);
-    if(account){
-    return {
-      userId:account.userId,
-      userName: args.userName,     
-      name: account.name
-        ? account.name
-        : account.profile.name
-        ? account.profile.name
-        : null,
-      profilePhoto: account.profile.picture,
-      followerData:account.follower,
-      followingData:account.following,
-      canFollow:(account.follower&&account.follower.indexOf(context.userId)==-1)||account.follower==undefined?true:false,
-      isVerified:account.profile.identityVerified?true:false
-    };
-  }else{
-    throw new Error("User does not exist.")
-  }
+    console.log("account", account);
+    if (account) {
+      return {
+        userId: account.userId,
+        userName: args.userName,
+        name: account.name
+          ? account.name
+          : account.profile.name
+          ? account.profile.name
+          : null,
+        profilePhoto: account.profile.picture,
+        followerData: account.follower,
+        followingData: account.following,
+        canFollow:
+          (account.follower &&
+            account.follower.indexOf(context.userId) == -1) ||
+          account.follower == undefined
+            ? true
+            : false,
+        isVerified: account.profile.identityVerified ? true : false,
+      };
+    } else {
+      throw new Error("User does not exist.");
+    }
   },
   async getOpportunities(parent, args, context, info) {
     const { userId, pageNo, perPage } = args.input;
     const { collections } = context;
-    console.log("userIds", userId)
+    console.log("userIds", userId);
     const { Catalog, Products } = collections;
-    if( userId ){
+    if (userId) {
       // let selector = {
       //   "product.uploadedBy.userId": userId
       // }
       // var documentIds = userId.map(function(myId) { return ObjectId.ObjectID.ObjectId(myId); });
       // console.log("documents", documentIds)
-      let opportunities = await Catalog.find({ "product.uploadedBy.userId": { $in: userId }}).skip( pageNo > 0 ? ( ( pageNo - 1 ) * perPage ) : 0 )
-      .limit(perPage).toArray();
+      let opportunities = await Catalog.find({
+        "product.uploadedBy.userId": { $in: userId },
+      })
+        .skip(pageNo > 0 ? (pageNo - 1) * perPage : 0)
+        .limit(perPage)
+        .toArray();
       // let opportunities = await Catalog.aggregate({ $match:  {"product.uploadedBy.userId": { $eq: userId }}}).toArray();
-      console.log("first if opportunities", opportunities)
+      console.log("first if opportunities", opportunities);
       return opportunities;
     } else {
-      let opportunities = await Catalog.find().skip( pageNo > 0 ? ( ( pageNo - 1 ) * perPage ) : 0 )
-      .limit( perPage ).toArray();
-      console.log("else opportunities", opportunities)
+      let opportunities = await Catalog.find()
+        .skip(pageNo > 0 ? (pageNo - 1) * perPage : 0)
+        .limit(perPage)
+        .toArray();
+      console.log("else opportunities", opportunities);
       return opportunities;
     }
     // Only include visible variants if `false`
@@ -164,7 +176,7 @@ export default {
     // if (shouldIncludeHidden === false) {
     //   selector.isVisible = true;
     // }
-  
+
     // // Exclude archived (deleted) variants if set to `false`
     // // Otherwise include archived variants in the results
     // if (shouldIncludeArchived === false) {
@@ -172,17 +184,28 @@ export default {
     //     $ne: true,
     //   };
     // }
-  
-    
   },
-  async getBidsOnMyProduct(parent, args, context, info){
+  async getBidsOnMyProduct(parent, args, context, info) {
+    let { input, ...connectionArgs } = args;
     let accountId = context.userId;
     if (!accountId || accountId == null) {
       console.log("Unauthenticated user");
       throw new Error("Unauthenticated user");
     }
     const { collections } = context;
-    const { productId, variantId } = args.input;
+    const { productId, variantId, first, offset, after, before } = input;
+    if (first) {
+      connectionArgs.first = first;
+    }
+    if (offset) {
+      connectionArgs.offset = offset;
+    }
+    if (after) {
+      connectionArgs.after = after;
+    }
+    if (before) {
+      connectionArgs.before = before;
+    }
     const { Bids } = collections;
     // let accountId = context.userId;
 
@@ -194,14 +217,23 @@ export default {
     if (decodeVariantId == variantId || variantId.length == 0) {
       throw new Error("variantId must be a Reaction ID");
     }
-    console.log("accountId",accountId)
-    let bidsOnProduct = await Bids.find({
+    console.log("accountId", accountId);
+    console.log("context query ", info);
+    let bidsOnProduct = Bids.find({
       productId: decodeProductId,
       variantId: decodeVariantId,
-      soldBy: accountId
-    }).toArray();
-    console.log("bidsOnProduct", bidsOnProduct)
-    return bidsOnProduct;
+      soldBy: accountId,
+    });
+    console.log("bidsOnProduct", bidsOnProduct);
+    return getPaginatedResponse(bidsOnProduct, connectionArgs, {
+      includeHasNextPage: wasFieldRequested("pageInfo.hasNextPage", info),
+      includeHasPreviousPage: wasFieldRequested(
+        "pageInfo.hasPreviousPage",
+        info
+      ),
+      includeTotalCount: wasFieldRequested("totalCount", info),
+    });
+    // return bidsOnProduct;
   },
   async getFilteredBids(parent, args, context, info) {
     let accountId = context.userId;
@@ -222,25 +254,25 @@ export default {
     if (decodeVariantId == variantId || variantId.length == 0) {
       throw new Error("variantId must be a Reaction ID");
     }
-    console.log("accountId",accountId)
+    console.log("accountId", accountId);
     let bidsOnProduct;
-    if(flag === "shortListed"){
+    if (flag === "shortListed") {
       bidsOnProduct = await Bids.find({
         productId: decodeProductId,
         variantId: decodeVariantId,
-        isShortList: true
+        isShortList: true,
       }).toArray();
-    } else if( flag === "favourite" ){
+    } else if (flag === "favourite") {
       bidsOnProduct = await Bids.find({
         productId: decodeProductId,
         variantId: decodeVariantId,
-        isFavourite: true
+        isFavourite: true,
       }).toArray();
     }
-    console.log("bidsOnProduct", bidsOnProduct)
+    console.log("bidsOnProduct", bidsOnProduct);
     return bidsOnProduct;
   },
-  async getProductBids(parent, args, context, info){
+  async getProductBids(parent, args, context, info) {
     let accountId = context.userId;
     if (!accountId || accountId == null) {
       console.log("Unauthenticated user");
@@ -259,15 +291,15 @@ export default {
     if (decodeVariantId == variantId || variantId.length == 0) {
       throw new Error("variantId must be a Reaction ID");
     }
-    console.log("accountId",accountId)
+    console.log("accountId", accountId);
     let bidsOnProduct = await Bids.find({
       productId: decodeProductId,
       variantId: decodeVariantId,
     }).toArray();
-    console.log("bidsOnProduct", bidsOnProduct)
+    console.log("bidsOnProduct", bidsOnProduct);
     return {
       bids: bidsOnProduct,
-      count: bidsOnProduct?.length
+      count: bidsOnProduct?.length,
     };
-  }
+  },
 };
