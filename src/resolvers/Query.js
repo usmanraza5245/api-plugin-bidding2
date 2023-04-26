@@ -193,7 +193,8 @@ export default {
       throw new Error("Unauthenticated user");
     }
     const { collections } = context;
-    const { productId, variantId, first, offset, after, before } = input;
+    const { productId, variantId, first, offset, after, before, searchQuery } =
+      input;
     if (first) {
       connectionArgs.first = first;
     }
@@ -219,11 +220,19 @@ export default {
     }
     console.log("accountId", accountId);
     console.log("context query ", info);
-    let bidsOnProduct = Bids.find({
+    let query = {
       productId: decodeProductId,
       variantId: decodeVariantId,
       soldBy: accountId,
-    });
+    };
+    if (searchQuery) {
+      query = {
+        ...query,
+        name: { $regex: searchQuery, $options: "i" },
+      };
+    }
+    let bidsOnProduct = Bids.find(query);
+
     console.log("bidsOnProduct", bidsOnProduct);
     return getPaginatedResponse(bidsOnProduct, connectionArgs, {
       includeHasNextPage: wasFieldRequested("pageInfo.hasNextPage", info),
