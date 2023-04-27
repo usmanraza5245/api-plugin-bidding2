@@ -193,8 +193,17 @@ export default {
       throw new Error("Unauthenticated user");
     }
     const { collections } = context;
-    const { productId, variantId, first, offset, after, before, searchQuery } =
-      input;
+    const {
+      productId,
+      variantId,
+      first,
+      offset,
+      after,
+      before,
+      searchQuery,
+      sortBy,
+      filteredBy,
+    } = input;
     if (first) {
       connectionArgs.first = first;
     }
@@ -208,6 +217,7 @@ export default {
       connectionArgs.before = before;
     }
     const { Bids } = collections;
+
     // let accountId = context.userId;
 
     let decodeProductId = decodeOpaqueId(productId).id;
@@ -218,22 +228,117 @@ export default {
     if (decodeVariantId == variantId || variantId.length == 0) {
       throw new Error("variantId must be a Reaction ID");
     }
-    console.log("accountId", accountId);
-    console.log("context query ", info);
+    // console.log("accountId", accountId);
+    // console.log("context query ", info);
     let query = {
       productId: decodeProductId,
       variantId: decodeVariantId,
       soldBy: accountId,
     };
+    let options = {};
     if (searchQuery) {
       query = {
         ...query,
         name: { $regex: searchQuery, $options: "i" },
       };
     }
+
+    if (filteredBy) {
+      if (filteredBy === "Approved") {
+        query = {
+          ...query,
+          $or: [
+            {
+              bidMetaFields: {
+                $exists: false,
+              },
+            },
+            {
+              bidMetaFields: {
+                $size: 0,
+              },
+            },
+            {
+              bidMetaFields: {
+                $elemMatch: {
+                  $or: [
+                    {
+                      status: { $eq: "Active" },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        };
+      } else if (filteredBy === "Pending") {
+        query = {
+          ...query,
+          bidMetaFields: {
+            $exists: true,
+            $ne: [],
+          },
+          $expr: {
+            $anyElementTrue: {
+              $map: {
+                input: "$bidMetaFields",
+                in: { $eq: ["$$this.status", "Pending"] },
+              },
+            },
+          },
+        };
+      } else if (filteredBy === "isFavourite") {
+        query = {
+          ...query,
+          isFavourite: true,
+        };
+      }
+    }
+
+    if (sortBy) {
+      if (sortBy === "createdAt") {
+        // options = {
+        //   createdAt: 1,
+        // };
+        options = {
+          sortBy: "createdAt",
+          sortOrder: "desc",
+        };
+      } else if (sortBy === "priceUp") {
+        console.log("running price up sort");
+        // options = {
+        //   createdAt: 1,
+        // };
+        options = {
+          sortBy: "exclusivePrice",
+          sortOrder: "asc",
+        };
+      } else if (sortBy === "priceDown") {
+        // options = {
+        //   createdAt: 1,
+        // };
+        options = {
+          sortBy: "exclusivePrice",
+          sortOrder: "desc",
+        };
+      }
+    }
     let bidsOnProduct = Bids.find(query);
 
-    console.log("bidsOnProduct", bidsOnProduct);
+    connectionArgs = {
+      ...connectionArgs,
+      ...options,
+    };
+    // let newBids = bidsOnProduct.toArray();
+    // newBids.map((bd) => {
+    //   console.log("bids exclusive price...", bd?.exclusivePrice);
+    // });
+    console.log("query :", query);
+
+    console.log("options are", options);
+
+    // console.log("new bids are", newBids);
+    // console.log("bidsOnProduct", bidsOnProduct);
     return getPaginatedResponse(bidsOnProduct, connectionArgs, {
       includeHasNextPage: wasFieldRequested("pageInfo.hasNextPage", info),
       includeHasPreviousPage: wasFieldRequested(
