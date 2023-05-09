@@ -180,6 +180,37 @@ export default {
       };
     }
   },
+  async updateBidContract(parent, args, context, info) {
+    try {
+      const { collections } = context;
+      const { Bids } = collections;
+      const { isContracted, bidId } = args.input;
+      // let accountId = context.userId;
+      let updatedBid = await Bids.updateOne(
+        { _id: bidId },
+        { $set: { isContracted: isContracted } }
+      );
+      if (updatedBid?.result?.nModified > 0) {
+        return {
+          success: true,
+          status: 200,
+          message: "Updated successfull.",
+        };
+      } else {
+        return {
+          success: false,
+          status: 500,
+          message: "Operation could not performed successfully.",
+        };
+      }
+    } catch (err) {
+      return {
+        success: false,
+        status: 500,
+        message: "Operation could not performed successfully.",
+      };
+    }
+  },
   // accept bid offer mutation
   async acceptBid(parent, args, context, info) {
     try {
