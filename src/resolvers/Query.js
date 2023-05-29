@@ -416,4 +416,29 @@ export default {
       count: bidsOnProduct?.length,
     };
   },
+  async getAllFilesOnMyProduct(parent, args, context, info) {
+    let { input, ...connectionArgs } = args;
+    let accountId = context.userId;
+    if (!accountId || accountId == null) {
+      console.log("Unauthenticated user");
+      throw new Error("Unauthenticated user");
+    }
+    const { collections } = context;
+    const { Bids } = collections;
+
+    const { productId, variantId } = input;
+    const decodeProductId = decodeOpaqueId(productId).id;
+    const decodeVariantId = decodeOpaqueId(variantId).id;
+    if (decodeProductId == productId || productId.length == 0) {
+      throw new Error("ProductId must be a Reaction ID");
+    }
+    if (decodeVariantId == variantId || variantId.length == 0) {
+      throw new Error("variantId must be a Reaction ID");
+    }
+    const query = {
+      productId: decodeProductId,
+      variantId: decodeVariantId,
+    };
+    return await Bids.find(query).toArray();
+  },
 };
