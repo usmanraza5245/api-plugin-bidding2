@@ -233,7 +233,7 @@ export default {
     let query = {
       productId: decodeProductId,
       variantId: decodeVariantId,
-      soldBy: accountId,
+      // soldBy: accountId,
     };
     let options = {};
     if (searchQuery) {
