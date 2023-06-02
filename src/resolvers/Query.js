@@ -28,7 +28,7 @@ export default {
   async getBidsbySellerId(parent, args, context, info) {
     let accountId = context.userId;
     if (!accountId || accountId == null) {
-      console.log("Unauthenticated user");
+      // console.log("Unauthenticated user");
       throw new Error("Unauthenticated user");
     }
     let bids = await getBidsbySellerId(context, args);
@@ -41,7 +41,7 @@ export default {
       throw new Error("Unauthenticated user");
     }
     let activeBids = await getActiveBids(context, args.input);
-    console.log("active bid", activeBids);
+    // console.log("active bid", activeBids);
     let is_valid = false;
 
     if (activeBids) {
@@ -102,13 +102,13 @@ export default {
       variantId: decodeVariantId,
       createdBy: accountId,
     }).toArray();
-    console.log("bidsOnProduct", bidsOnProduct);
+    // console.log("bidsOnProduct", bidsOnProduct);
     return bidsOnProduct;
   },
   async getBidsbyUserId(parent, args, context, info) {
     console.log("getBidsbyUserList");
     let user_bid = await getBidbyAccountId(context, args);
-    console.log("user_bid", user_bid);
+    // console.log("user_bid", user_bid);
     return user_bid;
   },
   async myNotifications(parent, args, context, info) {
@@ -161,14 +161,14 @@ export default {
         .limit(perPage)
         .toArray();
       // let opportunities = await Catalog.aggregate({ $match:  {"product.uploadedBy.userId": { $eq: userId }}}).toArray();
-      console.log("first if opportunities", opportunities);
+      // console.log("first if opportunities", opportunities);
       return opportunities;
     } else {
       let opportunities = await Catalog.find()
         .skip(pageNo > 0 ? (pageNo - 1) * perPage : 0)
         .limit(perPage)
         .toArray();
-      console.log("else opportunities", opportunities);
+      // console.log("else opportunities", opportunities);
       return opportunities;
     }
     // Only include visible variants if `false`
@@ -333,9 +333,6 @@ export default {
     // newBids.map((bd) => {
     //   console.log("bids exclusive price...", bd?.exclusivePrice);
     // });
-    console.log("query :", query);
-
-    console.log("options are", options);
 
     // console.log("new bids are", newBids);
     // console.log("bidsOnProduct", bidsOnProduct);
@@ -368,7 +365,7 @@ export default {
     if (decodeVariantId == variantId || variantId.length == 0) {
       throw new Error("variantId must be a Reaction ID");
     }
-    console.log("accountId", accountId);
+    // console.log("accountId", accountId);
     let bidsOnProduct;
     if (flag === "shortListed") {
       bidsOnProduct = await Bids.find({
@@ -383,7 +380,6 @@ export default {
         isFavourite: true,
       }).toArray();
     }
-    console.log("bidsOnProduct", bidsOnProduct);
     return bidsOnProduct;
   },
   async getProductBids(parent, args, context, info) {
@@ -410,7 +406,6 @@ export default {
       productId: decodeProductId,
       variantId: decodeVariantId,
     }).toArray();
-    console.log("bidsOnProduct", bidsOnProduct);
     return {
       bids: bidsOnProduct,
       count: bidsOnProduct?.length,
