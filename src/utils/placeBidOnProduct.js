@@ -78,17 +78,18 @@ export default async function placeBidOnProduct(context, args) {
     createdAt: new Date(),
     type: "counterOffer",
   };
-  let bidsCountByUser = await Bids.find({
-    reactionVariantId: variantId,
-    reactionProductId: productId,
-    createdBy: accountId,
-  }).count();
-  console.log("bids count....", bidsCountByUser);
-  if (bidsCountByUser >= 5) {
-    throw new Error(
-      "You have exceeded your submission limit on this opportunity.The maximum limit is 5."
-    );
-  }
+  //The code is commented for now. Austin want to remove this 5 submission check.
+  // let bidsCountByUser = await Bids.find({
+  //   reactionVariantId: variantId,
+  //   reactionProductId: productId,
+  //   createdBy: accountId,
+  // }).count();
+  // console.log("bids count....", bidsCountByUser);
+  // if (bidsCountByUser >= 5) {
+  //   throw new Error(
+  //     "You have exceeded your submission limit on this opportunity.The maximum limit is 5."
+  //   );
+  // }
   let insert_obj = {
     _id: new_id,
     productSlug: product && product.product ? product.product.slug : null,
